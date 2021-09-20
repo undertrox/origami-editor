@@ -207,14 +207,10 @@ public class StraightLine {
         }
 
         public boolean isIntersecting() {
-            switch (this) {
-                case INTERSECT_X_1:
-                case INTERSECT_T_A_21:
-                case INTERSECT_T_B_22:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (this) {
+                case INTERSECT_X_1, INTERSECT_T_A_21, INTERSECT_T_B_22 -> true;
+                default -> false;
+            };
         }
     }
 }

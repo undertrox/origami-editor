@@ -196,21 +196,11 @@ public class App extends JFrame implements ActionListener {
         angleSystemModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(angleSystemModel));
         angleSystemModel.addPropertyChangeListener(e -> {
             switch (angleSystemModel.getAngleSystemInputType()) {
-                case DEG_1:
-                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
-                    break;
-                case DEG_2:
-                    canvasModel.setMouseMode(MouseMode.ANGLE_SYSTEM_16);
-                    break;
-                case DEG_3:
-                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17);
-                    break;
-                case DEG_4:
-                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
-                    break;
-                case DEG_5:
-                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37);
-                    break;
+                case DEG_1 -> canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
+                case DEG_2 -> canvasModel.setMouseMode(MouseMode.ANGLE_SYSTEM_16);
+                case DEG_3 -> canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17);
+                case DEG_4 -> canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
+                case DEG_5 -> canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37);
             }
         });
         angleSystemModel.addPropertyChangeListener(e -> repaintCanvas());

@@ -58,31 +58,14 @@ public class Orh {
                 Camera creasePatternCamera = new Camera();
                 save.setCreasePatternCamera(creasePatternCamera);
                 switch (m.group(1)) {
-                    case "camera_ichi_x":
-
-                        creasePatternCamera.setCameraPositionX(Double.parseDouble(m.group(2)));
-                        break;
-                    case "camera_ichi_y":
-                        creasePatternCamera.setCameraPositionY(Double.parseDouble(m.group(2)));
-                        break;
-                    case "camera_kakudo":
-                        creasePatternCamera.setCameraAngle(Double.parseDouble(m.group(2)));
-                        break;
-                    case "camera_kagami":
-                        creasePatternCamera.setCameraMirror(Double.parseDouble(m.group(2)));
-                        break;
-                    case "camera_bairitsu_x":
-                        creasePatternCamera.setCameraZoomX(Double.parseDouble(m.group(2)));
-                        break;
-                    case "camera_bairitsu_y":
-                        creasePatternCamera.setCameraZoomY(Double.parseDouble(m.group(2)));
-                        break;
-                    case "hyouji_ichi_x":
-                        creasePatternCamera.setDisplayPositionX(Double.parseDouble(m.group(2)));
-                        break;
-                    case "hyouji_ichi_y":
-                        creasePatternCamera.setDisplayPositionY(Double.parseDouble(m.group(2)));
-                        break;
+                    case "camera_ichi_x" -> creasePatternCamera.setCameraPositionX(Double.parseDouble(m.group(2)));
+                    case "camera_ichi_y" -> creasePatternCamera.setCameraPositionY(Double.parseDouble(m.group(2)));
+                    case "camera_kakudo" -> creasePatternCamera.setCameraAngle(Double.parseDouble(m.group(2)));
+                    case "camera_kagami" -> creasePatternCamera.setCameraMirror(Double.parseDouble(m.group(2)));
+                    case "camera_bairitsu_x" -> creasePatternCamera.setCameraZoomX(Double.parseDouble(m.group(2)));
+                    case "camera_bairitsu_y" -> creasePatternCamera.setCameraZoomY(Double.parseDouble(m.group(2)));
+                    case "hyouji_ichi_x" -> creasePatternCamera.setDisplayPositionX(Double.parseDouble(m.group(2)));
+                    case "hyouji_ichi_y" -> creasePatternCamera.setDisplayPositionY(Double.parseDouble(m.group(2)));
                 }
             }
         }
@@ -110,73 +93,21 @@ public class Orh {
 
                 String value = m.group(2).trim();
                 switch (m.group(1)) {
-                    case "ckbox_mouse_settei": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setMouseWheelMovesCreasePattern(selected);
-                        break;
-                    }
-                    case "ckbox_ten_sagasi": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayPointSpotlight(selected);
-                        break;
-                    }
-                    case "ckbox_ten_hanasi": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayPointOffset(selected);
-                        break;
-                    }
-                    case "ckbox_kou_mitudo_nyuuryoku": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayGridInputAssist(selected);
-                        break;
-                    }
-                    case "ckbox_bun": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayComments(selected);
-                        break;
-                    }
-                    case "ckbox_cp": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayCpLines(selected);
-                        break;
-                    }
-                    case "ckbox_a0": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayAuxLines(selected);
-                        break;
-                    }
-                    case "ckbox_a1": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayLiveAuxLines(selected);
-                        break;
-                    }
-                    case "ckbox_mejirusi": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayMarkings(selected);
-                        break;
-                    }
-                    case "ckbox_cp_ue": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayCreasePatternOnTop(selected);
-                        break;
-                    }
-                    case "ckbox_oritatami_keika": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayFoldingProgress(selected);
-                        break;
-                    }
-                    case "iTenkaizuSenhaba":
-                        canvasModel.setLineWidth(Integer.parseInt(value));
-                        break;
-                    case "ir_ten":
-                        canvasModel.setPointSize(Integer.parseInt(value));
-                        break;
-                    case "i_orisen_hyougen":
-                        canvasModel.setLineStyle(LineStyle.from(value));
-                        break;
-                    case "i_anti_alias":
-                        canvasModel.setAntiAlias(Boolean.parseBoolean(value));
-                        break;
+                    case "ckbox_mouse_settei" -> canvasModel.setMouseWheelMovesCreasePattern(Boolean.parseBoolean(value));
+                    case "ckbox_ten_sagasi" -> canvasModel.setDisplayPointSpotlight(Boolean.parseBoolean(value));
+                    case "ckbox_ten_hanasi" -> canvasModel.setDisplayPointOffset(Boolean.parseBoolean(value));
+                    case "ckbox_kou_mitudo_nyuuryoku" -> canvasModel.setDisplayGridInputAssist(Boolean.parseBoolean(value));
+                    case "ckbox_bun" -> canvasModel.setDisplayComments(Boolean.parseBoolean(value));
+                    case "ckbox_cp" -> canvasModel.setDisplayCpLines(Boolean.parseBoolean(value));
+                    case "ckbox_a0" -> canvasModel.setDisplayAuxLines(Boolean.parseBoolean(value));
+                    case "ckbox_a1" -> canvasModel.setDisplayLiveAuxLines(Boolean.parseBoolean(value));
+                    case "ckbox_mejirusi" -> canvasModel.setDisplayMarkings(Boolean.parseBoolean(value));
+                    case "ckbox_cp_ue" -> canvasModel.setDisplayCreasePatternOnTop(Boolean.parseBoolean(value));
+                    case "ckbox_oritatami_keika" -> canvasModel.setDisplayFoldingProgress(Boolean.parseBoolean(value));
+                    case "iTenkaizuSenhaba" -> canvasModel.setLineWidth(Integer.parseInt(value));
+                    case "ir_ten" -> canvasModel.setPointSize(Integer.parseInt(value));
+                    case "i_orisen_hyougen" -> canvasModel.setLineStyle(LineStyle.from(value));
+                    case "i_anti_alias" -> canvasModel.setAntiAlias(Boolean.parseBoolean(value));
                 }
             }
         }
@@ -210,47 +141,19 @@ public class Orh {
                 }
 
                 switch (m.group(1)) {
-                    case "i_kitei_jyoutai":
-                        gridModel.setBaseState(Grid.State.from(m.group(2)));
-                        break;
-                    case "nyuuryoku_kitei":
-                        gridModel.setGridSize(StringOp.String2int(m.group(2), gridModel.getGridSize()));
-                        break;
-                    case "memori_kankaku":
-                        int scale_interval = Integer.parseInt(m.group(2));
-
-                        gridModel.setIntervalGridSize(scale_interval);
-                        break;
-                    case "a_to_heikouna_memori_iti":
-                        gridModel.setHorizontalScalePosition(Integer.parseInt(m.group(2)));
-                        break;
-                    case "b_to_heikouna_memori_iti":
-                        gridModel.setVerticalScalePosition(Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_senhaba":
-                        gridModel.setGridLineWidth(Integer.parseInt(m.group(2)));
-                        break;
-                    case "d_kousi_x_a":
-                        gridXA = StringOp.String2double(m.group(2), gridModel.getGridXA());
-                        break;
-                    case "d_kousi_x_b":
-                        gridXB = StringOp.String2double(m.group(2), gridModel.getGridXB());
-                        break;
-                    case "d_kousi_x_c":
-                        gridXC = StringOp.String2double(m.group(2), gridModel.getGridXC());
-                        break;
-                    case "d_kousi_y_a":
-                        gridYA = StringOp.String2double(m.group(2), gridModel.getGridYA());
-                        break;
-                    case "d_kousi_y_b":
-                        gridYB = StringOp.String2double(m.group(2), gridModel.getGridYB());
-                        break;
-                    case "d_kousi_y_c":
-                        gridYB = StringOp.String2double(m.group(2), gridModel.getGridYC());
-                        break;
-                    case "d_kousi_kakudo":
-                        gridYC = StringOp.String2double(m.group(2), gridModel.getGridAngle());
-                        break;
+                    case "i_kitei_jyoutai" -> gridModel.setBaseState(Grid.State.from(m.group(2)));
+                    case "nyuuryoku_kitei" -> gridModel.setGridSize(StringOp.String2int(m.group(2), gridModel.getGridSize()));
+                    case "memori_kankaku" -> gridModel.setIntervalGridSize(Integer.parseInt(m.group(2)));
+                    case "a_to_heikouna_memori_iti" -> gridModel.setHorizontalScalePosition(Integer.parseInt(m.group(2)));
+                    case "b_to_heikouna_memori_iti" -> gridModel.setVerticalScalePosition(Integer.parseInt(m.group(2)));
+                    case "kousi_senhaba" -> gridModel.setGridLineWidth(Integer.parseInt(m.group(2)));
+                    case "d_kousi_x_a" -> gridXA = StringOp.String2double(m.group(2), gridModel.getGridXA());
+                    case "d_kousi_x_b" -> gridXB = StringOp.String2double(m.group(2), gridModel.getGridXB());
+                    case "d_kousi_x_c" -> gridXC = StringOp.String2double(m.group(2), gridModel.getGridXC());
+                    case "d_kousi_y_a" -> gridYA = StringOp.String2double(m.group(2), gridModel.getGridYA());
+                    case "d_kousi_y_b" -> gridYB = StringOp.String2double(m.group(2), gridModel.getGridYB());
+                    case "d_kousi_y_c" -> gridYB = StringOp.String2double(m.group(2), gridModel.getGridYC());
+                    case "d_kousi_kakudo" -> gridYC = StringOp.String2double(m.group(2), gridModel.getGridAngle());
                 }
 
             }
@@ -288,24 +191,12 @@ public class Orh {
                 }
 
                 switch (m.group(1)) {
-                    case "kousi_color_R":
-                        i_grid_color_R = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_color_G":
-                        i_grid_color_G = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_color_B":
-                        i_grid_color_B = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_memori_color_R":
-                        i_grid_memori_color_R = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_memori_color_G":
-                        i_grid_memori_color_G = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_memori_color_B":
-                        i_grid_memori_color_B = (Integer.parseInt(m.group(2)));
-                        break;
+                    case "kousi_color_R" -> i_grid_color_R = (Integer.parseInt(m.group(2)));
+                    case "kousi_color_G" -> i_grid_color_G = (Integer.parseInt(m.group(2)));
+                    case "kousi_color_B" -> i_grid_color_B = (Integer.parseInt(m.group(2)));
+                    case "kousi_memori_color_R" -> i_grid_memori_color_R = (Integer.parseInt(m.group(2)));
+                    case "kousi_memori_color_G" -> i_grid_memori_color_G = (Integer.parseInt(m.group(2)));
+                    case "kousi_memori_color_B" -> i_grid_memori_color_B = (Integer.parseInt(m.group(2)));
                 }
             }
         }
@@ -354,33 +245,15 @@ public class Orh {
                 }
 
                 switch (m.group(1)) {
-                    case "oriagarizu_F_color_R":
-                        i_oriagarizu_F_color_R = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_F_color_G":
-                        i_oriagarizu_F_color_G = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_F_color_B":
-                        i_oriagarizu_F_color_B = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_B_color_R":
-                        i_oriagarizu_B_color_R = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_B_color_G":
-                        i_oriagarizu_B_color_G = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_B_color_B":
-                        i_oriagarizu_B_color_B = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_L_color_R":
-                        i_oriagarizu_L_color_R = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_L_color_G":
-                        i_oriagarizu_L_color_G = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_L_color_B":
-                        i_oriagarizu_L_color_B = (Integer.parseInt(m.group(2)));
-                        break;
+                    case "oriagarizu_F_color_R" -> i_oriagarizu_F_color_R = (Integer.parseInt(m.group(2)));
+                    case "oriagarizu_F_color_G" -> i_oriagarizu_F_color_G = (Integer.parseInt(m.group(2)));
+                    case "oriagarizu_F_color_B" -> i_oriagarizu_F_color_B = (Integer.parseInt(m.group(2)));
+                    case "oriagarizu_B_color_R" -> i_oriagarizu_B_color_R = (Integer.parseInt(m.group(2)));
+                    case "oriagarizu_B_color_G" -> i_oriagarizu_B_color_G = (Integer.parseInt(m.group(2)));
+                    case "oriagarizu_B_color_B" -> i_oriagarizu_B_color_B = (Integer.parseInt(m.group(2)));
+                    case "oriagarizu_L_color_R" -> i_oriagarizu_L_color_R = (Integer.parseInt(m.group(2)));
+                    case "oriagarizu_L_color_G" -> i_oriagarizu_L_color_G = (Integer.parseInt(m.group(2)));
+                    case "oriagarizu_L_color_B" -> i_oriagarizu_L_color_B = (Integer.parseInt(m.group(2)));
                 }
             }
         }

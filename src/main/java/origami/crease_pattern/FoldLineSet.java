@@ -1,18 +1,16 @@
 package origami.crease_pattern;
 
-import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
+import origami.crease_pattern.element.*;
 import origami_editor.editor.Save;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -69,14 +67,6 @@ public class FoldLineSet {
         }
     }
 
-    private void setTotal(int total) {
-        this.total = total;
-
-        while (lineSegments.size() < total + 1) {
-            lineSegments.add(new LineSegment());
-        }
-    }
-
     public void set(FoldLineSet foldLineSet) {
         setTotal(foldLineSet.getTotal());
         for (int i = 0; i <= total; i++) {
@@ -88,6 +78,14 @@ public class FoldLineSet {
     //Get the total number of line segments
     public int getTotal() {
         return total;
+    }
+
+    private void setTotal(int total) {
+        this.total = total;
+
+        while (lineSegments.size() < total + 1) {
+            lineSegments.add(new LineSegment());
+        }
     }
 
     //Get a line segment
@@ -761,7 +759,7 @@ public class FoldLineSet {
         }
 
         reset();
-    setSave(save);
+        setSave(save);
 
         return i_r;
     }
@@ -938,7 +936,7 @@ public class FoldLineSet {
 
     public boolean del_selected_lineSegment_symple_roop() {
         for (int i = 1; i <= total; i++) {
-            LineSegment s= lineSegments.get(i);
+            LineSegment s = lineSegments.get(i);
             if (s.getSelected() == 2) {
                 deleteLineSegment_vertex(i);
                 return true;
@@ -2323,7 +2321,7 @@ public class FoldLineSet {
 
     public void deleteLineSegment_vertex(int i) {//When erasing the i-th fold line, if the end point of the fold line can also be erased, erase it.
         LineSegment s = lineSegments.get(i);
-        
+
         Point pa = new Point();
         pa.set(s.getA());
         Point pb = new Point();
@@ -2538,7 +2536,7 @@ public class FoldLineSet {
 
         LineSegment si = lineSegments.get(i);
         LineSegment sj = lineSegments.get(j);
-        
+
         LineSegment addLine = new LineSegment();
         int i_ten = 0;
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
@@ -2661,7 +2659,7 @@ public class FoldLineSet {
             int ix, iy;
             ix = i_s[0];
             iy = i_s[1];
-            
+
             LineSegment lix = lineSegments.get(ix);
             LineSegment liy = lineSegments.get(iy);
             int i_decision;
@@ -3451,7 +3449,7 @@ public class FoldLineSet {
         int i_tss_black = 0;
         int i_tss_cyan = 0;
 
-        SortingBox<LineSegment>  nbox = new SortingBox<>();
+        SortingBox<LineSegment> nbox = new SortingBox<>();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -3505,7 +3503,7 @@ public class FoldLineSet {
         //t1を端点とする折線をNarabebakoに入れる
         SortingBox<LineSegment> nbox = new SortingBox<>();
         for (int i = 1; i <= total; i++) {
-            LineSegment s= lineSegments.get(i);
+            LineSegment s = lineSegments.get(i);
             if (s.getColor().isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(s.getA()) < hantei_kyori) {
                     nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
@@ -3712,15 +3710,13 @@ public class FoldLineSet {
             //The following is when the two line types are blue-blue or red-red
             LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.line_intersect_decide(nbox.getValue(1), nbox.getValue(2), 0.00001, 0.00001);
 
-            switch (i_senbun_kousa_hantei) {
-                case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323:
-                case PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333:
-                case PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353:
-                case PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (i_senbun_kousa_hantei) {
+                case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323,
+                        PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333,
+                        PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353,
+                        PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343 -> true;
+                default -> false;
+            };
         }
 
         //以下はt1を端点とする折線の数が4以上の偶数のとき

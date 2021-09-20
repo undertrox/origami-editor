@@ -702,7 +702,7 @@ public class FoldedFigure {
 
 
             switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
-                case NONE_0:
+                case NONE_0 -> {
                     setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
@@ -712,11 +712,8 @@ public class FoldedFigure {
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
-                    break;
-                case WORKER_1:
-                case WORKER_2:
-                    cp_worker2.changePointState(i_closestPointId);
-                    break;
+                }
+                case WORKER_1, WORKER_2 -> cp_worker2.changePointState(i_closestPointId);
             }
         }
 
@@ -733,7 +730,7 @@ public class FoldedFigure {
             System.out.println("i_ten_sentaku = " + i_point_selection);
 
             switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
-                case NONE_0:
+                case NONE_0 -> {
                     setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
@@ -743,10 +740,8 @@ public class FoldedFigure {
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
-                    break;
-                case WORKER_1:
-                    cp_worker2.changePointState(i_closestPointId);
-                    break;
+                }
+                case WORKER_1 -> cp_worker2.changePointState(i_closestPointId);
             }
 
             if (i_foldedFigure_operation_mode == 1) {
@@ -855,7 +850,7 @@ public class FoldedFigure {
             //i_ten_sentakuを決める  ここまで
 
             switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
-                case NONE_0:
+                case NONE_0 -> {
                     setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
@@ -865,11 +860,8 @@ public class FoldedFigure {
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
-                    break;
-                case WORKER_1:
-                case WORKER_2:
-                    cp_worker2.changePointState(i_closestPointId);
-                    break;
+                }
+                case WORKER_1, WORKER_2 -> cp_worker2.changePointState(i_closestPointId);
             }
         }
 
@@ -886,7 +878,7 @@ public class FoldedFigure {
             System.out.println("i_ten_sentaku = " + i_point_selection);
 
             switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
-                case NONE_0:
+                case NONE_0 -> {
                     setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
@@ -896,10 +888,8 @@ public class FoldedFigure {
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
-                    break;
-                case WORKER_1:
-                    cp_worker2.changePointState(i_closestPointId);
-                    break;
+                }
+                case WORKER_1 -> cp_worker2.changePointState(i_closestPointId);
             }
 
             if (i_foldedFigure_operation_mode == 1) {
@@ -1076,17 +1066,10 @@ public class FoldedFigure {
         ;
 
         public boolean isBelowOrEqual5() {
-            switch (this) {
-                case ORDER_0:
-                case ORDER_1:
-                case ORDER_2:
-                case ORDER_3:
-                case ORDER_4:
-                case ORDER_5:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (this) {
+                case ORDER_0, ORDER_1, ORDER_2, ORDER_3, ORDER_4, ORDER_5 -> true;
+                default -> false;
+            };
         }
     }
 

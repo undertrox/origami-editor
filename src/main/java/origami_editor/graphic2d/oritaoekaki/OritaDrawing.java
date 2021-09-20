@@ -18,21 +18,11 @@ public class OritaDrawing {
 
     public static void widthLine(Graphics g, LineSegment s, double r, LineColor iColor) {
         switch (iColor) {
-            case BLACK_0:
-                g.setColor(Color.black);
-                break;
-            case RED_1:
-                g.setColor(Color.red);
-                break;
-            case BLUE_2:
-                g.setColor(Color.blue);
-                break;
-            case CYAN_3:
-                g.setColor(Color.green);
-                break;
-            case ORANGE_4:
-                g.setColor(Color.orange);
-                break;
+            case BLACK_0 -> g.setColor(Color.black);
+            case RED_1 -> g.setColor(Color.red);
+            case BLUE_2 -> g.setColor(Color.blue);
+            case CYAN_3 -> g.setColor(Color.green);
+            case ORANGE_4 -> g.setColor(Color.orange);
         }
         LineSegment sp = OritaCalc.moveParallel(s, r);
         LineSegment sm = OritaCalc.moveParallel(s, -r);

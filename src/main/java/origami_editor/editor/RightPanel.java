@@ -1233,13 +1233,14 @@ public class RightPanel extends JPanel {
     public void setData(PropertyChangeEvent e, CanvasModel data) {
         frame.setData(e, data);
         switch (data.getAuxLiveLineColor()) {
-            case ORANGE_4:
+            case ORANGE_4 -> {
                 colOrangeButton.setBackground(Color.ORANGE);
                 colYellowButton.setBackground(new Color(150, 150, 150));
-                break;
-            case YELLOW_7:
+            }
+            case YELLOW_7 -> {
                 colYellowButton.setBackground(Color.YELLOW);
                 colOrangeButton.setBackground(new Color(150, 150, 150));
+            }
         }
 
         c_colButton.setIcon(new ColorIcon(data.getCircleCustomizedColor()));

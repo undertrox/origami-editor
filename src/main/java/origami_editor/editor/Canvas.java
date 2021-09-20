@@ -485,21 +485,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     if (mouseMode == MouseMode.CREASE_SELECT_19) {
                         if (app.ckbox_add_frame_SelectAnd3click_isSelected) {
                             switch (app.canvasModel.getSelectionOperationMode()) {
-                                case MOVE_1:
-                                    app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
-                                    break;
-                                case MOVE4P_2:
-                                    app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
-                                    break;
-                                case COPY_3:
-                                    app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
-                                    break;
-                                case COPY4P_4:
-                                    app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
-                                    break;
-                                case MIRROR_5:
-                                    app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
-                                    break;
+                                case MOVE_1 -> app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
+                                case MOVE4P_2 -> app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
+                                case COPY_3 -> app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
+                                case COPY4P_4 -> app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
+                                case MIRROR_5 -> app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
                             }
                         }
                     }
@@ -513,21 +503,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 System.out.println("i_cp_or_oriagari = " + target);
 
                 switch (target) {
-                    case CREASE_PATTERN_0: // 展開図移動。
-                        creasePatternCamera.camera_position_specify_from_TV(p);
-                        break;
-                    case FOLDED_FRONT_1:
-                        app.OZ.foldedFigureFrontCamera.camera_position_specify_from_TV(p);
-                        break;
-                    case FOLDED_BACK_2:
-                        app.OZ.foldedFigureRearCamera.camera_position_specify_from_TV(p);
-                        break;
-                    case TRANSPARENT_FRONT_3:
-                        app.OZ.transparentFrontCamera.camera_position_specify_from_TV(p);
-                        break;
-                    case TRANSPARENT_BACK_4:
-                        app.OZ.transparentRearCamera.camera_position_specify_from_TV(p);
-                        break;
+                    case CREASE_PATTERN_0 -> // 展開図移動。
+                            creasePatternCamera.camera_position_specify_from_TV(p);
+                    case FOLDED_FRONT_1 -> app.OZ.foldedFigureFrontCamera.camera_position_specify_from_TV(p);
+                    case FOLDED_BACK_2 -> app.OZ.foldedFigureRearCamera.camera_position_specify_from_TV(p);
+                    case TRANSPARENT_FRONT_3 -> app.OZ.transparentFrontCamera.camera_position_specify_from_TV(p);
+                    case TRANSPARENT_BACK_4 -> app.OZ.transparentRearCamera.camera_position_specify_from_TV(p);
                 }
 
                 mouse_temp0.set(p);
@@ -1282,22 +1263,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     break;
                 case MouseEvent.BUTTON2:
                     switch (app.i_cp_or_oriagari) {
-                        case CREASE_PATTERN_0:
+                        case CREASE_PATTERN_0 -> {
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             es1.setCamera(creasePatternCamera);
-                            break;
-                        case FOLDED_FRONT_1:
-                            app.OZ.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                            break;
-                        case FOLDED_BACK_2:
-                            app.OZ.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                            break;
-                        case TRANSPARENT_FRONT_3:
-                            app.OZ.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                            break;
-                        case TRANSPARENT_BACK_4:
-                            app.OZ.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                            break;
+                        }
+                        case FOLDED_FRONT_1 -> app.OZ.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        case FOLDED_BACK_2 -> app.OZ.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        case TRANSPARENT_FRONT_3 -> app.OZ.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        case TRANSPARENT_BACK_4 -> app.OZ.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                     }
 
                     mouse_temp0.set(p);

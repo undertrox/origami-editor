@@ -15,11 +15,11 @@ class SubThread extends Thread {
         long start = System.currentTimeMillis();
 
         switch (app.subThreadMode) {
-            case FOLDING_ESTIMATE_0:
+            case FOLDING_ESTIMATE_0 -> {
                 app.folding_estimated();
                 app.repaint();
-                break;
-            case FOLDING_ESTIMATE_SAVE_100_1:
+            }
+            case FOLDING_ESTIMATE_SAVE_100_1 -> {
                 String fname = app.selectFileName("file name for Img save");
                 if (fname != null) {
                     app.OZ.summary_write_image_during_execution = true;//Meaning during summary writing
@@ -47,8 +47,8 @@ class SubThread extends Thread {
                     }
                     app.OZ.summary_write_image_during_execution = false;
                 }
-                break;
-            case FOLDING_ESTIMATE_SPECIFIC_2:
+            }
+            case FOLDING_ESTIMATE_SPECIFIC_2 -> {
                 if (app.foldedCases == app.OZ.discovered_fold_cases) {
                     app.OZ.text_result = "Number of found solutions = " + app.OZ.discovered_fold_cases + "  ";
                 }
@@ -62,14 +62,11 @@ class SubThread extends Thread {
                         objective = app.OZ.discovered_fold_cases;
                     }
                 }
-                break;
-            case CHECK_CAMV_3:
-                app.mainDrawingWorker.ap_check4(app.d_ap_check4);
-                break;
+            }
+            case CHECK_CAMV_3 -> app.mainDrawingWorker.ap_check4(app.d_ap_check4);
+
             //Two-color crease pattern
-            case TWO_COLORED_4:
-                app.createTwoColorCreasePattern();
-                break;
+            case TWO_COLORED_4 -> app.createTwoColorCreasePattern();
         }
 
         long stop = System.currentTimeMillis();

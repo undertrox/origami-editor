@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="origami-editor" target="11" />
+      <module name="origami-editor" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

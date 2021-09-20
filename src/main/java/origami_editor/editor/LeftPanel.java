@@ -1567,21 +1567,22 @@ public class LeftPanel extends JPanel {
             colCyanButton.setForeground(Color.black);
 
             switch (data.getLineColor()) {
-                case BLACK_0:
+                case BLACK_0 -> {
                     colBlackButton.setBackground(Color.black);
                     colBlackButton.setForeground(Color.white);
-                    break;
-                case RED_1:
+                }
+                case RED_1 -> {
                     colRedButton.setBackground(Color.red);
                     colRedButton.setForeground(Color.black);
-                    break;
-                case BLUE_2:
+                }
+                case BLUE_2 -> {
                     colBlueButton.setBackground(Color.blue);
                     colBlueButton.setForeground(Color.black);
-                    break;
-                case CYAN_3:
+                }
+                case CYAN_3 -> {
                     colCyanButton.setBackground(Color.cyan);
                     colCyanButton.setForeground(Color.black);
+                }
             }
         }
 
