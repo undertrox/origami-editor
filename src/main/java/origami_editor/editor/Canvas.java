@@ -866,22 +866,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     break;
                 case MouseEvent.BUTTON2:
                     switch (app.i_cp_or_oriagari) {
-                        case CREASE_PATTERN_0: // 展開図移動。
+                        case CREASE_PATTERN_0 -> { // 展開図移動。
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             es1.setCamera(creasePatternCamera);
-                            break;
-                        case FOLDED_FRONT_1:
-                            app.OZ.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                            break;
-                        case FOLDED_BACK_2:
-                            app.OZ.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                            break;
-                        case TRANSPARENT_FRONT_3:
-                            app.OZ.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                            break;
-                        case TRANSPARENT_BACK_4:
-                            app.OZ.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                            break;
+                        }
+                        case FOLDED_FRONT_1 -> app.OZ.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        case FOLDED_BACK_2 -> app.OZ.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        case TRANSPARENT_FRONT_3 -> app.OZ.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        case TRANSPARENT_BACK_4 -> app.OZ.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                     }
 
                     mouse_temp0.set(p);

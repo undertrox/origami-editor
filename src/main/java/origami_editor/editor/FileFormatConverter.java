@@ -1,21 +1,6 @@
 package origami_editor.editor;
 
-import origami.crease_pattern.element.*;
-import origami.crease_pattern.element.Point;
-import origami_editor.editor.databinding.CanvasModel;
-import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.editor.databinding.GridModel;
-import origami_editor.graphic2d.grid.Grid;
 import origami_editor.record.Memo;
-import origami_editor.tools.Camera;
-import origami_editor.tools.StringOp;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FileFormatConverter {
 

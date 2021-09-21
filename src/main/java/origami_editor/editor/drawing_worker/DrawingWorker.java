@@ -19,7 +19,6 @@ import origami_editor.record.Memo;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 import origami_editor.tools.Camera;
-import origami_editor.tools.StringOp;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -27,8 +26,6 @@ import java.beans.PropertyChangeEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DrawingWorker {
     // ------------

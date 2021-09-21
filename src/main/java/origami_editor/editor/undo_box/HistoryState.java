@@ -58,9 +58,7 @@ public class HistoryState {
     private Save getCurrent() {
         try {
             return (Save) convertFromBytes(current);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 

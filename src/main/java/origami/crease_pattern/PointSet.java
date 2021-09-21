@@ -6,13 +6,11 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Point_p;
 import origami.crease_pattern.element.Polygon;
 import origami_editor.editor.Save;
-import origami_editor.record.Memo;
 import origami.folding.element.Face;
 import origami.crease_pattern.element.Line;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * A collection of points.

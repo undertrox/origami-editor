@@ -1600,25 +1600,23 @@ public class LeftPanel extends JPanel {
             senbun_henkan2Button.setBackground(Color.white);
 
             switch (data.getMouseMode()) {
-                case CREASE_MAKE_MOUNTAIN_23:
+                case CREASE_MAKE_MOUNTAIN_23 -> {
                     toMountainButton.setForeground(Color.black);
                     toMountainButton.setBackground(Color.red);
-                    break;
-                case CREASE_MAKE_VALLEY_24:
+                }
+                case CREASE_MAKE_VALLEY_24 -> {
                     toValleyButton.setForeground(Color.black);
                     toValleyButton.setBackground(Color.blue);
-                    break;
-                case CREASE_MAKE_EDGE_25:
+                }
+                case CREASE_MAKE_EDGE_25 -> {
                     toEdgeButton.setForeground(Color.white);
                     toEdgeButton.setBackground(Color.black);
-                    break;
-                case CREASE_MAKE_AUX_60:
+                }
+                case CREASE_MAKE_AUX_60 -> {
                     toAuxButton.setForeground(Color.black);
                     toAuxButton.setBackground(new Color(100, 200, 200));
-                    break;
-                case CREASE_TOGGLE_MV_58:
-                    senbun_henkan2Button.setBackground(new Color(138, 43, 226));
-                    break;
+                }
+                case CREASE_TOGGLE_MV_58 -> senbun_henkan2Button.setBackground(new Color(138, 43, 226));
             }
         }
 
@@ -1630,21 +1628,11 @@ public class LeftPanel extends JPanel {
             reflectButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
 
             switch (data.getSelectionOperationMode()) {
-                case MOVE_1:
-                    moveButton.setBorder(new LineBorder(Color.green, 3, false));
-                    break;
-                case MOVE4P_2:
-                    move2p2pButton.setBorder(new LineBorder(Color.green, 3, false));
-                    break;
-                case COPY_3:
-                    copyButton.setBorder(new LineBorder(Color.green, 3, false));
-                    break;
-                case COPY4P_4:
-                    copy2p2pButton.setBorder(new LineBorder(Color.green, 3, false));
-                    break;
-                case MIRROR_5:
-                    reflectButton.setBorder(new LineBorder(Color.green, 3, false));
-                    break;
+                case MOVE_1 -> moveButton.setBorder(new LineBorder(Color.green, 3, false));
+                case MOVE4P_2 -> move2p2pButton.setBorder(new LineBorder(Color.green, 3, false));
+                case COPY_3 -> copyButton.setBorder(new LineBorder(Color.green, 3, false));
+                case COPY4P_4 -> copy2p2pButton.setBorder(new LineBorder(Color.green, 3, false));
+                case MIRROR_5 -> reflectButton.setBorder(new LineBorder(Color.green, 3, false));
             }
         }
     }
