@@ -2,7 +2,7 @@ package origami_editor.editor;
 
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
-import origami_editor.editor.canvas.BaseMouseHandler;
+import origami_editor.editor.canvas.handler.BaseMouseHandler;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.canvas.MouseModeHandler;

@@ -6,7 +6,7 @@ import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
+import origami_editor.editor.canvas.handler.MouseHandlerModifyCalculatedShape;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.task.FoldingEstimateSave100Task;
 import origami_editor.editor.task.FoldingEstimateSpecificTask;

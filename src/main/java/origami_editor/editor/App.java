@@ -9,6 +9,7 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami_editor.editor.action.Click;
+import origami_editor.editor.canvas.handler.*;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.canvas.*;
