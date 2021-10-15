@@ -116,7 +116,7 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
         if (d.lineStep.size() == 2 + (honsuu)) {
             LineSegment closest_step_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
 
-            closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 3, 2 + (honsuu)));
+            closest_step_lineSegment.set(d.getClosestLineStepLineSegment(p, 3, 2 + (honsuu)));
             if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) >= d.selectionDistance) {
                 d.lineStep.clear();
                 return;

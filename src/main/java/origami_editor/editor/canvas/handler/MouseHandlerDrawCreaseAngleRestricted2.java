@@ -158,14 +158,14 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
 
             LineSegment closestLineSegment = new LineSegment();
             //line_step[2から10]までとs_step[11から19]まで
-            closestLineSegment.set(d.get_moyori_step_lineSegment(p, 3, 2 + (honsuu)));
+            closestLineSegment.set(d.getClosestLineStepLineSegment(p, 3, 2 + (honsuu)));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
                 d.lineStepAdd(closestLineSegment);
             }
 
             //line_step[2から10]までとs_step[11から19]まで
-            closestLineSegment.set(d.get_moyori_step_lineSegment(p, 2 + (honsuu) + 1, 2 + (honsuu) + (honsuu)));
+            closestLineSegment.set(d.getClosestLineStepLineSegment(p, 2 + (honsuu) + 1, 2 + (honsuu) + (honsuu)));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
                 d.lineStepAdd(closestLineSegment);

@@ -1,6 +1,6 @@
 package origami_editor.editor.databinding;
 
-import origami_editor.graphic2d.grid.Grid;
+import origami_editor.editor.canvas.Grid;
 import origami.crease_pattern.OritaCalc;
 
 import java.awt.*;

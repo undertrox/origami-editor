@@ -106,7 +106,7 @@ public class App extends JFrame implements ActionListener {
         final ConsoleDialog consoleDialog;
 
         if (System.console() == null) {
-            consoleDialog = null;//new ConsoleDialog();
+            consoleDialog = new ConsoleDialog();
         } else {
             consoleDialog = null;
         }

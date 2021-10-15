@@ -54,7 +54,7 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
 
 
         if ((d.lineStep.size() == 4) && (d.circleStep.size() == 0)) {
-            LineSegment closest_step_lineSegment = d.get_moyori_step_lineSegment(p, 3, 4);
+            LineSegment closest_step_lineSegment = d.getClosestLineStepLineSegment(p, 3, 4);
             d.lineStep.remove(3);
 
             d.lineStep.get(2).set(closest_step_lineSegment);

@@ -117,7 +117,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
 
 
         if (d.lineStep.size() == 2 + (honsuu)) {
-            LineSegment closestLineSegment = d.get_moyori_step_lineSegment(p, 3, 2 + honsuu);
+            LineSegment closestLineSegment = d.getClosestLineStepLineSegment(p, 3, 2 + honsuu);
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 LineSegment s = new LineSegment();
                 s.set(closestLineSegment);

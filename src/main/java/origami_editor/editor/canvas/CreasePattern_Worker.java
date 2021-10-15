@@ -12,7 +12,6 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.Save;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.undo_box.HistoryState;
-import origami_editor.graphic2d.grid.Grid;
 import origami_editor.tools.Camera;
 
 import java.awt.*;
@@ -104,7 +103,7 @@ public class CreasePattern_Worker {
     public void setGridConfigurationData(GridModel gridModel) {
         grid.setGridConfigurationData(gridModel);
         text_cp_setumei = "1/" + grid.getGridSize();
-        calculateDecisionWidth();
+        calculateSelectionDistance();
 
         app.repaintCanvas();
     }
@@ -184,7 +183,7 @@ public class CreasePattern_Worker {
     public void setCamera(Camera cam0) {
         camera.setCamera(cam0);
 
-        calculateDecisionWidth();
+        calculateSelectionDistance();
     }
 
     public void setCustomCircleColor(Color c0) {
@@ -224,7 +223,7 @@ public class CreasePattern_Worker {
         pointSize = i0;
     }
 
-    public void calculateDecisionWidth() {
+    public void calculateSelectionDistance() {
         selectionDistance = grid.getGridWidth() / 4.0;
         if (camera.getCameraZoomX() * selectionDistance < 10.0) {
             selectionDistance = 10.0 / camera.getCameraZoomX();
@@ -573,26 +572,26 @@ public class CreasePattern_Worker {
     public Point getClosestPoint(Point t0) {
         // When dividing paper 1/1 Only the end point of the folding line is the reference point. The grid point never becomes the reference point.
         // When dividing paper from 1/2 to 1/512 The end point of the polygonal line and the grid point in the paper frame (-200.0, -200.0 _ 200.0, 200.0) are the reference points.
-        Point t1 = new Point(); //End point of the polygonal line
-        Point t3 = new Point(); //Center of circle
+        Point closestPoint = new Point(); //End point of the polygonal line
+        Point closestCircleCenter = new Point(); //Center of circle
 
-        t1.set(foldLineSet.closestPoint(t0)); // foldLineSet.closestPoint returns (100000.0,100000.0) if there is no close point
+        closestPoint.set(foldLineSet.closestPoint(t0)); // foldLineSet.closestPoint returns (100000.0,100000.0) if there is no close point
+        closestCircleCenter.set(foldLineSet.closestCenter(t0)); // foldLineSet.closestCenter returns (100000.0,100000.0) if there is no close point
 
-        t3.set(foldLineSet.closestCenter(t0)); // foldLineSet.closestCenter returns (100000.0,100000.0) if there is no close point
-
-        if (t0.distanceSquared(t1) > t0.distanceSquared(t3)) {
-            t1.set(t3);
+        if (t0.distanceSquared(closestPoint) > t0.distanceSquared(closestCircleCenter)) {
+            closestPoint.set(closestCircleCenter);
         }
 
         if (grid.getBaseState() == Grid.State.HIDDEN) {
-            return t1;
+            return closestPoint;
         }
 
-        if (t0.distanceSquared(t1) > t0.distanceSquared(grid.closestGridPoint(t0))) {
-            return grid.closestGridPoint(t0);
+        Point closestGridPoint = grid.closestGridPoint(t0);
+        if (t0.distanceSquared(closestPoint) > t0.distanceSquared(closestGridPoint)) {
+            return closestGridPoint;
         }
 
-        return t1;
+        return closestPoint;
     }
 
     //------------------------------
@@ -601,7 +600,7 @@ public class CreasePattern_Worker {
     }
 
     //------------------------------------------------------
-    public LineSegment get_moyori_step_lineSegment(Point t0, int imin, int imax) {
+    public LineSegment getClosestLineStepLineSegment(Point t0, int imin, int imax) {
         int minrid = -100;
         double minr = 100000;//Senbun s1 =new Senbun(100000.0,100000.0,100000.0,100000.1);
         for (int i = imin; i <= imax; i++) {
@@ -961,19 +960,5 @@ public class CreasePattern_Worker {
     public void setData(HistoryStateModel historyStateModel) {
         setUndoTotal(historyStateModel.getHistoryTotal());
         setAuxUndoTotal(historyStateModel.getHistoryTotal());
-    }
-
-    public enum FourPointStep {
-        STEP_0,
-        STEP_1,
-        STEP_2,
-    }
-
-    public enum OperationFrameMode {
-        NONE_0,
-        CREATE_1,
-        MOVE_POINTS_2,
-        MOVE_SIDES_3,
-        MOVE_BOX_4,
     }
 }

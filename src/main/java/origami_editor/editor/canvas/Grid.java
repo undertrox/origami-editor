@@ -1,4 +1,4 @@
-package origami_editor.graphic2d.grid;
+package origami_editor.editor.canvas;
 
 import origami_editor.editor.databinding.GridModel;
 import origami.crease_pattern.element.LineSegment;
