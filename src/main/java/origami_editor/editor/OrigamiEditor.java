@@ -1,6 +1,6 @@
 package origami_editor.editor;
 
-import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
@@ -11,6 +11,7 @@ public class OrigamiEditor {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
         SwingUtilities.invokeLater(() -> {
+            FlatLaf.registerCustomDefaultsSource( "origami_editor.editor.themes" );
             FlatLightLaf.setup();
 
             App app = new App();//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Rewrite location
