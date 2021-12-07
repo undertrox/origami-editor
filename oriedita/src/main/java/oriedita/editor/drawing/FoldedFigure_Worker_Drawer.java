@@ -1,5 +1,10 @@
 package oriedita.editor.drawing;
 
+import oriedita.editor.Colors;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
@@ -8,11 +13,6 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.HierarchyList;
-import oriedita.editor.Colors;
-import oriedita.editor.drawing.tools.DrawingUtil;
-import oriedita.editor.databinding.ApplicationModel;
-import oriedita.editor.databinding.FoldedFigureModel;
-import oriedita.editor.drawing.tools.Camera;
 import origami.folding.constraint.CustomConstraint;
 
 import java.awt.*;
@@ -24,7 +24,7 @@ import java.awt.geom.Path2D;
  */
 public class FoldedFigure_Worker_Drawer {
     static boolean displaySsi = false;
-    boolean showConstraints = true;
+    static boolean showConstraints = true;
     private final FoldedFigure_Worker worker;
     Camera camera = new Camera();
     Color F_color = new Color(255, 255, 50);//表面の色
@@ -54,6 +54,7 @@ public class FoldedFigure_Worker_Drawer {
 
     public static void setStaticData(ApplicationModel applicationModel) {
         displaySsi = applicationModel.getDisplaySelfIntersection();
+        showConstraints = applicationModel.getDisplayMarkings();
     }
 
     public void setCamera(Camera cam0) {
