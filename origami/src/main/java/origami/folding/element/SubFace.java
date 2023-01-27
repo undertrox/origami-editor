@@ -180,6 +180,9 @@ public class SubFace {
                 if (hierarchyList.get(faceIdList[i], faceIdList[j]) == HierarchyList.ABOVE_1) {
                     FaceId2fromTop_counted_position[i] = FaceId2fromTop_counted_position[i] + 1;
                 }
+                if (i != j && hierarchyList.isEmpty(faceIdList[i], faceIdList[j]) && hierarchyList.guess(faceIdList[i], faceIdList[j]) == HierarchyList.ABOVE_1) {
+                    FaceId2fromTop_counted_position[i] = FaceId2fromTop_counted_position[i] + 1;
+                }
             }
             FaceId2fromTop_counted_position[i] = faceIdCount - FaceId2fromTop_counted_position[i];
         }

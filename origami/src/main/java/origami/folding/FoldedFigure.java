@@ -2,11 +2,11 @@ package origami.folding;
 
 import org.tinylog.Logger;
 import origami.crease_pattern.FoldingException;
-import origami.crease_pattern.worker.BasicBranch_Worker;
-import origami.crease_pattern.worker.WireFrame_Worker;
-import origami.crease_pattern.worker.FoldedFigure_Worker;
-import origami.folding.util.IBulletinBoard;
 import origami.crease_pattern.LineSegmentSet;
+import origami.crease_pattern.worker.BasicBranch_Worker;
+import origami.crease_pattern.worker.FoldedFigure_Worker;
+import origami.crease_pattern.worker.WireFrame_Worker;
+import origami.folding.util.IBulletinBoard;
 
 public class FoldedFigure {
         public FoldedFigure_Worker ct_worker;
@@ -204,6 +204,17 @@ public class FoldedFigure {
         return 1000;
     }
 
+    public void fixNonOverlappingSubfaces() {
+
+        for (int i = 1; i <= ct_worker.hierarchyList.facesTotal; i++) {
+            for (int j = 1; j <= ct_worker.hierarchyList.facesTotal; j++) {
+                if (ct_worker.hierarchyList.isEmpty(i, j)) {
+
+                }
+            }
+        }
+    }
+
     public int folding_estimated_04() throws InterruptedException {
         Logger.info("＜＜＜＜＜folding_estimated_04;開始");
         bulletinBoard.write("<<<<folding_estimated_04;  start");
@@ -263,6 +274,7 @@ public class FoldedFigure {
         cp_worker1.setAllPointStateFalse();
         cp_worker2.setAllPointStateFalse();
     }
+
 
     public enum EstimationOrder {
         ORDER_0(0),

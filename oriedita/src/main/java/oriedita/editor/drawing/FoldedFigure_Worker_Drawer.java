@@ -1,23 +1,28 @@
 package oriedita.editor.drawing;
 
+import oriedita.editor.Colors;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.HierarchyList;
-import oriedita.editor.Colors;
-import oriedita.editor.drawing.tools.DrawingUtil;
-import oriedita.editor.databinding.ApplicationModel;
-import oriedita.editor.databinding.FoldedFigureModel;
-import oriedita.editor.drawing.tools.Camera;
 import origami.folding.constraint.CustomConstraint;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Responsible for drawing a folded figure.
@@ -147,21 +152,38 @@ public class FoldedFigure_Worker_Drawer {
     }
 
     private void fillFace(Graphics2D g, Camera transform, PointSet faces, int id) {
+        fillFace(g, transform, faces, id, 0);
+    }
+
+    private void fillFaceOverlap(Graphics2D g, Camera transform, PointSet faces, int id1, int id2, int n) {
+        Point start = faces.getPoint(faces.getPointId(id1, 1));
+        List<Point> polygon = new ArrayList<>();
+        if (faces.inside(start, id2) != Polygon.Intersection.OUTSIDE) {
+            polygon.add(start);
+        }
+        for (int i = 2; i < faces.getPointsCount(id1); i++) {
+
+        }
+    }
+
+    private void fillFace(Graphics2D g, Camera transform, PointSet faces, int id, int n) {
         Point t1 = new Point();
 
         Path2D.Double path = new Path2D.Double();
 
         t1.set(transform.object2TV(faces.getPoint(faces.getPointId(id, 1))));
-        path.moveTo(t1.getX(), t1.getY());
+        path.moveTo(t1.getX()+n, t1.getY()+n);
 
         for (int i = 2; i <= faces.getPointsCount(id); i++) {
             t1.set(transform.object2TV(faces.getPoint(faces.getPointId(id, i))));
-            path.lineTo(t1.getX(), t1.getY());
+            path.lineTo(t1.getX()+n, t1.getY()+n);
         }
 
         path.closePath();
 
         g.fill(path);
+        g.setColor(Color.BLACK);
+        g.draw(path);
     }
 
     public void calculateFromTopCountedPosition() {
@@ -173,7 +195,7 @@ public class FoldedFigure_Worker_Drawer {
         //ここまでで、上下表の情報がSubFaceの各面に入った
     }
 
-    public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure) {
+    public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure, PointSet foldedFigure) {
         Graphics2D g2 = (Graphics2D) g;
         boolean flipped = camera.determineIsCameraMirrored();
 
@@ -184,6 +206,7 @@ public class FoldedFigure_Worker_Drawer {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
 
         int faceOrder;
+        /*
         for (int im = 1; im <= worker.SubFaceTotal; im++) {//imは各SubFaceの番号
             if (worker.s0[im].getFaceIdCount() > 0) {//MenidsuuはSubFace(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
                 //Determine the color of the im-th SubFace when drawing a fold-up diagram
@@ -208,6 +231,97 @@ public class FoldedFigure_Worker_Drawer {
 
                 fillFace(g2, camera, subFace_figure, im);
             }
+        }*/
+        List<Integer> faceIdList = new ArrayList<>();
+        int n = worker.hierarchyList.getFacesTotal();
+        Set<Integer> cycleFacesTop = new HashSet<>();
+        Set<Integer> cycleFacesBottom = new HashSet<>();
+
+        Set<Integer> faceIdSet = IntStream.range(1, n+1).boxed().collect(Collectors.toSet());
+        // TODO: make good faceidList
+        Map<Integer, List<Integer>> redraw = new HashMap<>(); // after drawing the key, all faces in the list need to be redrawn where they intersect with the key face
+
+        while (!faceIdSet.isEmpty()) {
+            Integer bottomId = null;
+            List<Integer> shortestFacesAbove = null;
+            for (Integer faceId : faceIdSet) {
+                //boolean isBottom = true;
+                List<Integer> facesAbove = new ArrayList<>();
+                for (Integer faceId2 : faceIdSet) {
+                    if (worker.hierarchyList.get(faceId, faceId2) == HierarchyList.ABOVE_1) {
+                        facesAbove.add(faceId2);
+                        if (shortestFacesAbove != null && facesAbove.size() > shortestFacesAbove.size()) {
+                            break;
+                        }
+                        //isBottom = false;
+                        //break;
+                    }
+                }
+                if (shortestFacesAbove == null || facesAbove.size() < shortestFacesAbove.size()) {
+                    shortestFacesAbove = facesAbove;
+                    bottomId = faceId;
+                }
+            }
+            if (!shortestFacesAbove.isEmpty()) {
+                // we have a cycle
+                System.out.println("cycle");
+                System.out.println(shortestFacesAbove + " " + bottomId);
+                redraw.put(bottomId, shortestFacesAbove);
+                faceIdSet.remove(bottomId);
+                faceIdList.add(-bottomId);
+            } else {
+                faceIdList.add(bottomId);
+                faceIdSet.remove(bottomId);
+            }
+        }
+        int i = 0;
+        if (flipped) {
+            Collections.reverse(faceIdList);
+        }
+        for (Integer faceId : faceIdList) {
+            boolean needsRedraw = false;
+            if (faceId < 0) {
+                needsRedraw = true;
+                faceId = -faceId;
+            }
+            int iFacePosition = orite.getIFacePosition(faceId);
+            if (flipped) {
+                if (iFacePosition % 2 == 0) {
+                    g.setColor(F_color);
+                } else {
+                    g.setColor(B_color);
+                }
+            } else {
+                if (iFacePosition % 2 == 1) {
+                    g.setColor(F_color);
+                } else {
+                    g.setColor(B_color);
+                }
+            }
+
+            fillFace(g2, camera, foldedFigure, faceId, i);
+            if (needsRedraw) {
+                for (Integer newFaceId : redraw.get(faceId)) {
+                    iFacePosition = orite.getIFacePosition(faceId);
+                    if (flipped) {
+                        if (iFacePosition % 2 == 0) {
+                            g.setColor(F_color);
+                        } else {
+                            g.setColor(B_color);
+                        }
+                    } else {
+                        if (iFacePosition % 2 == 1) {
+                            g.setColor(F_color);
+                        } else {
+                            g.setColor(B_color);
+                        }
+                    }
+
+                    fillFace(g2, camera, foldedFigure, newFaceId, i);
+                }
+            }
+
+            i += 0;
         }
         // Draw a surface so far
 
@@ -383,7 +497,7 @@ public class FoldedFigure_Worker_Drawer {
             }
 
             if (drawing_flag) {//棒を描く。
-                drawLine(g2, camera, subFace_figure, ib);
+                //drawLine(g2, camera, subFace_figure, ib);
             }
         }
 

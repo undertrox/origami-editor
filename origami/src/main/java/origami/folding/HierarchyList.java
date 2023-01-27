@@ -125,6 +125,70 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         return value == EMPTY_N100 || value == UNKNOWN_N50;
     }
 
+    // Tries to guess the relationship of nonoverlapping faces
+    // if guessing fails, returns get(i,j)
+    public int guess(int i, int j) {
+        int value = guess_helper(i, j);
+        set(i, j, value);
+        return value;
+    }
+
+    private int guess_helper(int i, int j) {
+        int value = hierarchyList.get(i, j);
+        if (value != EMPTY_N100 && value != UNKNOWN_N50) {
+            return value;
+        }
+        Queue<Integer> facesAbove = new ArrayDeque<>();
+        Queue<Integer> facesBelow = new ArrayDeque<>();
+        Set<Integer> doneFaces = new HashSet<>();
+        doneFaces.add(i);
+        Set<Integer> tempList = new HashSet<>();
+        facesAbove.add(i);
+        facesBelow.add(i);
+        boolean done = true;
+        int counter = 0;
+        do {
+            counter++;
+            if (counter > 3) {
+                //break;
+            }
+            done = true;
+            for (Integer faceId : facesAbove) {
+                for (int k = 1; k <= facesTotal; k++) {
+                    if (get(faceId, k) == ABOVE_1) {
+                        if (k == j) {
+                            return ABOVE_1;
+                        }
+                        if (!doneFaces.contains(k)) {
+                            tempList.add(k);
+                            done = false;
+                        }
+                    }
+                }
+            }
+            doneFaces.addAll(tempList);
+            facesAbove.addAll(tempList);
+            tempList.clear();
+            for (Integer faceId : facesBelow) {
+                for (int k = 1; k <= facesTotal; k++) {
+                    if (get(faceId, k) == BELOW_0) {
+                        if (k == j) {
+                            return BELOW_0;
+                        }
+                        if (!doneFaces.contains(k)) {
+                            tempList.add(k);
+                            done = false;
+                        }
+                    }
+                }
+                doneFaces.addAll(tempList);
+                facesBelow.addAll(tempList);
+                tempList.clear();
+            }
+        } while (!done);
+        return facesAbove.size() > facesBelow.size()? ABOVE_1 : BELOW_0;
+    }
+
     public void removeCustomConstraint(CustomConstraint cons) {
         customConstraints.remove(cons);
     }

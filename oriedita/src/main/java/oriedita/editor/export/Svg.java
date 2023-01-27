@@ -17,6 +17,7 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.FoldedFigure;
+import origami.folding.HierarchyList;
 import origami.folding.element.SubFace;
 import origami.folding.util.SortingBox;
 
@@ -24,8 +25,9 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Svg {
 
@@ -164,6 +166,7 @@ public class Svg {
     public static void getMemo_for_svg_with_camera(PrintWriter pw, Camera camera, FoldedFigure_Drawer foldedFigure) {//折り上がり図(hyouji_flg==5)
         WireFrame_Worker orite = foldedFigure.foldedFigure.cp_worker1;
         PointSet subFace_figure = foldedFigure.foldedFigure.cp_worker3.get();
+        PointSet folded_figure = foldedFigure.foldedFigure.cp_worker2.get();
         boolean front_back = camera.determineIsCameraMirrored();
 
         Point t0 = new Point();
@@ -175,7 +178,8 @@ public class Svg {
         Point b = new Point();
         StringBuilder str_zahyou;
         String str_stroke = "black";
-        String str_strokewidth = "1";
+        String str_strokewidth = "2";
+        String str_line = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getLineColor());
 
         int SubFaceTotal = subFace_figure.getNumFaces();
         SubFace[] s0 = foldedFigure.foldedFigure.ct_worker.s0;
@@ -190,8 +194,82 @@ public class Svg {
         }
         //ここまでで、上下表の情報がSubFaceの各面に入った
 
+        List<Integer> faceIdList = new ArrayList<>();
+        int n = foldedFigure.foldedFigure.ct_worker.hierarchyList.getFacesTotal();
+
+        Set<Integer> faceIdSet = IntStream.range(1, n+1).boxed().collect(Collectors.toSet());
+        // TODO: make good faceidList
+        while (!faceIdSet.isEmpty()) {
+            Integer bottomId = null;
+            for (Integer faceId : faceIdSet) {
+                boolean isBottom = true;
+                for (Integer faceId2 : faceIdSet) {
+                    if (foldedFigure.foldedFigure.ct_worker.hierarchyList.get(faceId, faceId2) == HierarchyList.ABOVE_1) {
+                        isBottom = false;
+                        break;
+                    }
+                }
+                if (isBottom) {
+                    bottomId = faceId;
+                }
+            }
+            faceIdList.add(bottomId);
+            faceIdSet.remove(bottomId);
+        }
+        if (front_back) {
+            Collections.reverse(faceIdList);
+        }
+        for (Integer faceId : faceIdList) {
+
+
+            if (orite.getIFacePosition(faceId) % 2 == 1) {
+                str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getFrontColor());
+            }//g.setColor(F_color)
+            if (orite.getIFacePosition(faceId) % 2 == 0) {
+                str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getBackColor());
+            }//g.setColor(B_color)
+
+            if (front_back) {
+                if (orite.getIFacePosition(faceId) % 2 == 0) {
+                    str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getFrontColor());
+                }//g.setColor(F_color)
+                if (orite.getIFacePosition(faceId) % 2 == 1) {
+                    str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getBackColor());
+                }//g.setColor(B_color)
+            }
+
+            //折り上がり図を描くときのSubFaceの色を決めるのはここまで
+
+            //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
+            for (int i = 1; i <= folded_figure.getPointsCount(faceId) - 1; i++) {
+                t0.setX(folded_figure.getPointX(folded_figure.getPointId(faceId, i)));
+                t0.setY(folded_figure.getPointY(folded_figure.getPointId(faceId, i)));
+                t1.set(camera.object2TV(t0));
+                x[i] = String.format("%.2f", t1.getX());
+                y[i] = String.format("%.2f", t1.getY());
+            }
+
+            t0.setX(folded_figure.getPointX(folded_figure.getPointId(faceId, folded_figure.getPointsCount(faceId))));
+            t0.setY(folded_figure.getPointY(folded_figure.getPointId(faceId, folded_figure.getPointsCount(faceId))));
+            t1.set(camera.object2TV(t0));
+            x[0] = String.format("%.2f", t1.getX());
+            y[0] = String.format("%.2f", t1.getY());
+            //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求めるのはここまで
+
+            str_zahyou = new StringBuilder(x[0] + "," + y[0]);
+            for (int i = 1; i <= folded_figure.getPointsCount(faceId) - 1; i++) {
+                str_zahyou.append(" ").append(x[i]).append(",").append(y[i]);
+            }
+
+            pw.println("<polygon points=\"" + str_zahyou + "\"" +
+                    " style=\"" + "stroke:" + str_line + ";fill:" + str_stroke + "\"" +
+                    " stroke-linejoin=\"miter\" stroke-miterlimit=\"2\" stroke-width=\"" + str_strokewidth + "\"" + " />"
+            );
+        }
+
         //面を描く
-        int face_order;
+        /*int face_order;
+
         for (int im = 1; im <= SubFaceTotal; im++) {//imは各SubFaceの番号
             if (s0[im].getFaceIdCount() > 0) {//MenidsuuはSubFace(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
 
@@ -247,6 +325,7 @@ public class Svg {
                 );
             }
         }
+
         //面を描く　ここまで-----------------------------------------------------------------------------------------
 
 
@@ -306,6 +385,7 @@ public class Svg {
                 );
             }
         }
+        */
     }
 
 

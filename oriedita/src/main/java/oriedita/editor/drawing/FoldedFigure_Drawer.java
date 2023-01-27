@@ -1,14 +1,14 @@
 package oriedita.editor.drawing;
 
 import org.tinylog.Logger;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.folded_figure.FoldedFigure_01;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.databinding.ApplicationModel;
-import oriedita.editor.databinding.FoldedFigureModel;
 import origami.folding.FoldedFigure;
-import oriedita.editor.folded_figure.FoldedFigure_01;
-import oriedita.editor.drawing.tools.Camera;
 
 import java.awt.*;
 
@@ -228,7 +228,7 @@ public class FoldedFigure_Drawer {
 
             //Display of folded figure *************
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
-                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get(), foldedFigure.cp_worker2.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -248,7 +248,7 @@ public class FoldedFigure_Drawer {
 
             //Display of folded figure ************* //Logger.info("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
-                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get(), foldedFigure.cp_worker2.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure

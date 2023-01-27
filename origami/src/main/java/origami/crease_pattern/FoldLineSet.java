@@ -3006,7 +3006,7 @@ public class FoldLineSet {
 
     public void check4() throws InterruptedException {//Check the number of lines around the apex
         cAMVViolations.clear();
-        unselect_all();
+        //unselect_all();
 
         PointLineMap map = new PointLineMap(lineSegments);
         Logger.info("check4_T_size() = " + map.getPoints().size());
