@@ -31,7 +31,7 @@ public class TwoColoredCpTest {
         try {
             foldedFigure.createTwoColorCreasePattern(lineSegmentSet, 1);
 
-            expect.serializer("json").toMatchSnapshot(foldedFigure.wireFrame_worker3.get());
+            expect.serializer("json").toMatchSnapshot(foldedFigure.wireFrame_foldedSubdividedCp.get());
         } catch (InterruptedException e) {
             Logger.error(e, "test got interrupted");
             Assertions.fail();

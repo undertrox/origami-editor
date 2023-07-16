@@ -9,6 +9,7 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.FoldingService;
 import origami.crease_pattern.LineSegmentSet;
 import origami.folding.FoldedFigure;
+
 import java.awt.event.ActionEvent;
 
 @ApplicationScoped
@@ -29,7 +30,7 @@ public class DuplicateFoldedModelAction extends AbstractOrieditaAction {
         if(foldedFiguresList.getActiveItem().getFoldedFigure().estimationStep != FoldedFigure.EstimationStep.STEP_10){
             foldingService.duplicate(foldedFiguresList.getActiveItem().getFoldedFigure());
         } else {
-            LineSegmentSet lines = foldedFiguresList.getActiveItem().getFoldedFigure().wireFrame_worker1.getLineStore();
+            LineSegmentSet lines = foldedFiguresList.getActiveItem().getFoldedFigure().wireFrame_baseCp.getLineStore();
             Foldable newFigure = foldingService.initFoldedFigure();
             try {
                 newFigure.createTwoColorCreasePattern(creasePatternCamera, lines);

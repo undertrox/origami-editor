@@ -125,13 +125,13 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 }//オリジナル 20180124 これ以外だと、表示いったんもどるようでうざい
             }
 
-            selectedFigure.getFoldedFigure().wireFrame_worker1.setAllPointStateFalse();
+            selectedFigure.getFoldedFigure().wireFrame_baseCp.setAllPointStateFalse();
             //折り上がり図でi_closestPointIdと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
             Point ps = new Point();
-            ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
-            for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
-                if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
-                    selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
+            ps.set(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i_closestPointId));
+            for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPointsTotal(); i++) {
+                if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
+                    selectedFigure.getFoldedFigure().wireFrame_baseCp.setPointStateTrue(i);
                 }
             }
         }
@@ -165,13 +165,13 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 }
             }
 
-            selectedFigure.getFoldedFigure().wireFrame_worker1.setAllPointStateFalse();
+            selectedFigure.getFoldedFigure().wireFrame_baseCp.setAllPointStateFalse();
             //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
             Point ps = new Point();
-            ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
-            for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
-                if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
-                    selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
+            ps.set(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i_closestPointId));
+            for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPointsTotal(); i++) {
+                if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
+                    selectedFigure.getFoldedFigure().wireFrame_baseCp.setPointStateTrue(i);
                 }
             }
         }
@@ -197,17 +197,17 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             }
         }//Store the number of the point closest to p in i_closestPointId
 
-        move_previous_selection_point.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
+        move_previous_selection_point.set(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i_closestPointId));
 
         Logger.info("i_nanini_tikai = " + i_nanini_near);
 
         if (i_nanini_near == 1) {
             //Decide i_point_selection
             i_point_selection = PointSelection.NONE_0;
-            if (selectedFigure.getFoldedFigure().wireFrame_worker1.getPointState(i_closestPointId)) {
+            if (selectedFigure.getFoldedFigure().wireFrame_baseCp.getPointState(i_closestPointId)) {
                 i_point_selection = PointSelection.WORKER_1;
             }
-            if (selectedFigure.getFoldedFigure().wireFrame_worker2.getPointState(i_closestPointId)) {
+            if (selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPointState(i_closestPointId)) {
                 i_point_selection = PointSelection.WORKER_2;
             }
             //Decide i_point_selection so far
@@ -217,17 +217,17 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 case NONE_0:
                     selectedFigure.getFoldedFigure().setAllPointStateFalse();
                     Point ps = new Point();
-                    ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
-                    for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
-                        if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
-                            selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
+                    ps.set(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i_closestPointId));
+                    for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPointsTotal(); i++) {
+                        if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
+                            selectedFigure.getFoldedFigure().wireFrame_baseCp.setPointStateTrue(i);
                         }
                     }
-                    selectedFigure.getFoldedFigure().wireFrame_worker2.changePointState(i_closestPointId);
+                    selectedFigure.getFoldedFigure().wireFrame_foldedCp.changePointState(i_closestPointId);
                     break;
                 case WORKER_1:
                 case WORKER_2:
-                    selectedFigure.getFoldedFigure().wireFrame_worker2.changePointState(i_closestPointId);
+                    selectedFigure.getFoldedFigure().wireFrame_foldedCp.changePointState(i_closestPointId);
                     break;
             }
         }
@@ -235,9 +235,9 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
         if (i_nanini_near == 2) {
             //Decide i_point_selection
             i_point_selection = PointSelection.NONE_0;
-            if (selectedFigure.getFoldedFigure().wireFrame_worker1.getPointState(i_closestPointId)) {
+            if (selectedFigure.getFoldedFigure().wireFrame_baseCp.getPointState(i_closestPointId)) {
                 i_point_selection = PointSelection.WORKER_1;
-                if (selectedFigure.getFoldedFigure().wireFrame_worker2.getSelectedPointsNum() > 0) {
+                if (selectedFigure.getFoldedFigure().wireFrame_foldedCp.getSelectedPointsNum() > 0) {
                     i_point_selection = PointSelection.WORKER_2;
                 }    //At the point specified on the origami diagram, one of the points that overlaps it is selected by wireFrame_worker2. In short, the point displayed in green on the origami diagram is selected.
             }
@@ -248,16 +248,16 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 case NONE_0:
                     selectedFigure.getFoldedFigure().setAllPointStateFalse();
                     Point ps = new Point();
-                    ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
-                    for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
-                        if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
-                            selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
+                    ps.set(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i_closestPointId));
+                    for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPointsTotal(); i++) {
+                        if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
+                            selectedFigure.getFoldedFigure().wireFrame_baseCp.setPointStateTrue(i);
                         }
                     }
-                    selectedFigure.getFoldedFigure().wireFrame_worker2.changePointState(i_closestPointId);
+                    selectedFigure.getFoldedFigure().wireFrame_foldedCp.changePointState(i_closestPointId);
                     break;
                 case WORKER_1:
-                    selectedFigure.getFoldedFigure().wireFrame_worker2.changePointState(i_closestPointId);
+                    selectedFigure.getFoldedFigure().wireFrame_foldedCp.changePointState(i_closestPointId);
                     break;
                 default:
                     break;
@@ -269,8 +269,8 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             }
         }
 
-        Logger.info("wireFrame_worker1.get_ten_sentakusuu() = " + selectedFigure.getFoldedFigure().wireFrame_worker1.getSelectedPointsNum());
-        Logger.info("wireFrame_worker2.get_ten_sentakusuu() = " + selectedFigure.getFoldedFigure().wireFrame_worker2.getSelectedPointsNum());
+        Logger.info("wireFrame_worker1.get_ten_sentakusuu() = " + selectedFigure.getFoldedFigure().wireFrame_baseCp.getSelectedPointsNum());
+        Logger.info("wireFrame_worker2.get_ten_sentakusuu() = " + selectedFigure.getFoldedFigure().wireFrame_foldedCp.getSelectedPointsNum());
     }
 
     private void foldedFigure_operation_mouse_drag_1(Point p) {//Work when dragging while holding down the left mouse button in the fold-up diagram operation
@@ -320,7 +320,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             }
         }//i_mottomo_tikai_Tenidにpに最も近い点の番号を格納 ここまで
 
-        move_previous_selection_point.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
+        move_previous_selection_point.set(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i_closestPointId));
 
         Logger.info("i_nanini_tikai = " + i_nanini_near);
 
@@ -328,10 +328,10 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
             //i_ten_sentakuを決める
             i_point_selection = PointSelection.NONE_0;
-            if (selectedFigure.getFoldedFigure().wireFrame_worker1.getPointState(i_closestPointId)) {
+            if (selectedFigure.getFoldedFigure().wireFrame_baseCp.getPointState(i_closestPointId)) {
                 i_point_selection = PointSelection.WORKER_1;
             }
-            if (selectedFigure.getFoldedFigure().wireFrame_worker2.getPointState(i_closestPointId)) {
+            if (selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPointState(i_closestPointId)) {
                 i_point_selection = PointSelection.WORKER_2;
             }
             //i_ten_sentakuを決める  ここまで
@@ -340,17 +340,17 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 case NONE_0:
                     selectedFigure.getFoldedFigure().setAllPointStateFalse();
                     Point ps = new Point();
-                    ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
-                    for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
-                        if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
-                            selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
+                    ps.set(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i_closestPointId));
+                    for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPointsTotal(); i++) {
+                        if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
+                            selectedFigure.getFoldedFigure().wireFrame_baseCp.setPointStateTrue(i);
                         }
                     }
-                    selectedFigure.getFoldedFigure().wireFrame_worker2.changePointState(i_closestPointId);
+                    selectedFigure.getFoldedFigure().wireFrame_foldedCp.changePointState(i_closestPointId);
                     break;
                 case WORKER_1:
                 case WORKER_2:
-                    selectedFigure.getFoldedFigure().wireFrame_worker2.changePointState(i_closestPointId);
+                    selectedFigure.getFoldedFigure().wireFrame_foldedCp.changePointState(i_closestPointId);
                     break;
             }
         }
@@ -358,9 +358,9 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
         if (i_nanini_near == 2) {
             //i_ten_sentakuを決める
             i_point_selection = PointSelection.NONE_0;
-            if (selectedFigure.getFoldedFigure().wireFrame_worker1.getPointState(i_closestPointId)) {
+            if (selectedFigure.getFoldedFigure().wireFrame_baseCp.getPointState(i_closestPointId)) {
                 i_point_selection = PointSelection.WORKER_1;
-                if (selectedFigure.getFoldedFigure().wireFrame_worker2.getSelectedPointsNum() > 0) {
+                if (selectedFigure.getFoldedFigure().wireFrame_foldedCp.getSelectedPointsNum() > 0) {
                     i_point_selection = PointSelection.WORKER_2;
                 }    //折図上で指定した点で、そこに重なるいずれかの点がcp_worker2で選択されている。要するに折図上の緑表示されている点を選んだ状態
             }
@@ -371,16 +371,16 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 case NONE_0:
                     selectedFigure.getFoldedFigure().setAllPointStateFalse();
                     Point ps = new Point();
-                    ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
-                    for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
-                        if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
-                            selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
+                    ps.set(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i_closestPointId));
+                    for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPointsTotal(); i++) {
+                        if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_foldedCp.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
+                            selectedFigure.getFoldedFigure().wireFrame_baseCp.setPointStateTrue(i);
                         }
                     }
-                    selectedFigure.getFoldedFigure().wireFrame_worker2.changePointState(i_closestPointId);
+                    selectedFigure.getFoldedFigure().wireFrame_foldedCp.changePointState(i_closestPointId);
                     break;
                 case WORKER_1:
-                    selectedFigure.getFoldedFigure().wireFrame_worker2.changePointState(i_closestPointId);
+                    selectedFigure.getFoldedFigure().wireFrame_foldedCp.changePointState(i_closestPointId);
                     break;
                 default:
                     break;
@@ -392,8 +392,8 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             }
         }
 
-        Logger.info("wireFrame_worker1.get_ten_sentakusuu() = " + selectedFigure.getFoldedFigure().wireFrame_worker1.getSelectedPointsNum());
-        Logger.info("wireFrame_worker2.get_ten_sentakusuu() = " + selectedFigure.getFoldedFigure().wireFrame_worker2.getSelectedPointsNum());
+        Logger.info("wireFrame_worker1.get_ten_sentakusuu() = " + selectedFigure.getFoldedFigure().wireFrame_baseCp.getSelectedPointsNum());
+        Logger.info("wireFrame_worker2.get_ten_sentakusuu() = " + selectedFigure.getFoldedFigure().wireFrame_foldedCp.getSelectedPointsNum());
     }
 
     private void foldedFigure_operation_mouse_drag_2(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業

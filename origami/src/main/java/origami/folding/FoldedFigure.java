@@ -12,7 +12,7 @@ import origami.folding.util.IBulletinBoard;
 public class FoldedFigure {
     public FoldedFigure_Worker foldedFigure_worker;
     public FoldedFigure_Configurator foldedFigure_configurator;
-    // The point set of wireFrame_worker2 may have overlapping bars, so
+    // The point set of wireFrame_foldedCp may have overlapping bars, so
     // Pass it to bb_worker once and organize it as a line segment set.
 
     public DisplayStyle display_flg_backup = DisplayStyle.DEVELOPMENT_4;//For temporary backup of display format displayStyle
@@ -27,8 +27,8 @@ public class FoldedFigure {
     // A variable that stores 0 if there is no possible overlap, and 1000 if there is a possible overlap.
     // The initial value here can be any number other than (0 or 1000).
     //int ip3a=1;
-    public int ip3 = 1;// Used by wireFrame_worker1 to specify the reference plane for folding.
-    public State ip4 = State.FRONT_0;// This specifies whether to flip over at the beginning of wireFrame_worker1. Do not set to 0. If it is 1, turn it over.
+    public int ip3 = 1;// Used by wireFrame_baseCp to specify the reference plane for folding.
+    public State ip4 = State.FRONT_0;// This specifies whether to flip over at the beginning of wireFrame_baseCp. Do not set to 0. If it is 1, turn it over.
     public int ip5 = -1;    // After the top and bottom craftsmen once show the overlap of foldable paper,
     public int ip6 = -1;    // After the top and bottom craftsmen once show the overlap of foldable paper,
     public boolean findAnotherOverlapValid = false;     //This takes 1 if "find another overlap" is valid, and 0 if it is invalid.
@@ -41,11 +41,11 @@ public class FoldedFigure {
     // 0, there is no possible overlapping state.
     // If it is 1000, another way of overlapping was found.
     public String text_result;                //Instantiation of result display string class
-    public LineSegmentSetWorker bb_worker = new LineSegmentSetWorker();    //Basic branch craftsman. Before passing the point set of wireFrame_worker2 to wireFrame_worker3,
+    public LineSegmentSetWorker bb_worker = new LineSegmentSetWorker();    //Basic branch craftsman. Before passing the point set of wireFrame_foldedCp to wireFrame_foldedSubdividedCp,
     double r = 3.0;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
-    public WireFrame_Worker wireFrame_worker1 = new WireFrame_Worker(r);    //Net craftsman. Fold the input line segment set first to make a fold-up diagram of the wire-shaped point set.
-    public WireFrame_Worker wireFrame_worker2 = new WireFrame_Worker(r);    //Net craftsman. It holds the folded-up view of the wire-shaped point set created by wireFrame_worker1 and functions as a line segment set.
-    public WireFrame_Worker wireFrame_worker3 = new WireFrame_Worker(r);    //Net craftsman. Organize the wire-shaped point set created by wireFrame_worker1. It has functions such as recognizing a new surface.
+    public WireFrame_Worker wireFrame_baseCp = new WireFrame_Worker(r);    //Net craftsman. Fold the input line segment set first to make a fold-up diagram of the wire-shaped point set.
+    public WireFrame_Worker wireFrame_foldedCp = new WireFrame_Worker(r);    //Net craftsman. It holds the folded-up view of the wire-shaped point set created by wireFrame_baseCp and functions as a line segment set.
+    public WireFrame_Worker wireFrame_foldedSubdividedCp = new WireFrame_Worker(r);    //Net craftsman. Organize the wire-shaped point set created by wireFrame_baseCp. It has functions such as recognizing a new surface.
 
     public FoldedFigure(IBulletinBoard bb) {
         foldedFigure_worker = new FoldedFigure_Worker(bb);
@@ -58,9 +58,9 @@ public class FoldedFigure {
     public void estimated_initialize() {
         text_result = "";
         bb_worker.reset();
-        wireFrame_worker1.reset();
-        wireFrame_worker2.reset();
-        wireFrame_worker3.reset();
+        wireFrame_baseCp.reset();
+        wireFrame_foldedCp.reset();
+        wireFrame_foldedSubdividedCp.reset();
         foldedFigure_worker.reset();
 
         displayStyle = DisplayStyle.NONE_0;
@@ -71,7 +71,7 @@ public class FoldedFigure {
         summary_write_image_during_execution = false; //If the export of multiple folded forecasts is in progress, it will be ture. 20170615
     }
 
-    public void folding_estimated(LineSegmentSet lineSegmentSet, int startingFaceId) throws InterruptedException, FoldingException {//折畳み予測の最初に、wireFrame_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(LineSegmentSet lineSegmentSet, int startingFaceId) throws InterruptedException, FoldingException {//折畳み予測の最初に、wireFrame_baseCp.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         //Folded view display camera settings
 
         EstimationOrder order = estimationOrder; // The latter will be reset during initialization.
@@ -140,9 +140,9 @@ public class FoldedFigure {
     public int folding_estimated_01(LineSegmentSet lineSegmentSet, int startingFaceId) throws InterruptedException {
         Logger.info("Folding stage: 01");
         bulletinBoard.write("<<<<folding_estimated_01;  start");
-        // Pass the line segment set created in mainDrawingWorker to wireFrame_worker1 by mouse input and make it a point set (corresponding to the development view).
-        wireFrame_worker1.setLineSegmentSet(lineSegmentSet);
-        ip3 = wireFrame_worker1.setStartingFaceId(startingFaceId);//20180222 Added to take over the previously specified reference plane when performing folding estimation with the fold line selected.
+        // Pass the line segment set created in mainDrawingWorker to wireFrame_baseCp by mouse input and make it a point set (corresponding to the development view).
+        wireFrame_baseCp.setLineSegmentSet(lineSegmentSet);
+        ip3 = wireFrame_baseCp.setStartingFaceId(startingFaceId);//20180222 Added to take over the previously specified reference plane when performing folding estimation with the fold line selected.
 
         if (Thread.interrupted()) {
             throw new InterruptedException();
@@ -155,16 +155,16 @@ public class FoldedFigure {
         Logger.info("Folding stage: 02");
         bulletinBoard.write("<<<<folding_estimated_02;  start");
         //cp_worker1が折りたたみを行い、できた針金図をcp_worker2に渡す。
-        //wireFrame_worker1 folds and passes the resulting wire diagram to wireFrame_worker2.
+        //wireFrame_baseCp folds and passes the resulting wire diagram to wireFrame_foldedCp.
         //cp_worker2が折りあがった形を少しだけ変形したいような場合に働く。
-        //It works when you want to slightly deform the folded shape of wireFrame_worker2.
-        wireFrame_worker2.set(wireFrame_worker1.folding());
+        //It works when you want to slightly deform the folded shape of wireFrame_foldedCp.
+        wireFrame_foldedCp.set(wireFrame_baseCp.folding());
 
         if (Thread.interrupted()) throw new InterruptedException();
 
-        //wireFrame_worker2.Iti_sitei(0.0 , 0.0);点集合の平均位置を全点の重心にする。
-        //  if(ip4==1){ wireFrame_worker2.uragaesi();}
-        // wireFrame_worker2.set( wireFrame_worker2.oritatami())  ;//折り畳んだ針金図を、折り開きたい場合の操作
+        //wireFrame_foldedCp.Iti_sitei(0.0 , 0.0);点集合の平均位置を全点の重心にする。
+        //  if(ip4==1){ wireFrame_foldedCp.uragaesi();}
+        // wireFrame_foldedCp.set( wireFrame_foldedCp.oritatami())  ;//折り畳んだ針金図を、折り開きたい場合の操作
         //ここまでで針金図はできていて、cp_worker2が持っている。これは、マウスで操作、変形できる。
         return 1000;
     }
@@ -172,7 +172,7 @@ public class FoldedFigure {
     public int folding_estimated_02col() throws InterruptedException {// 20171225　２色塗りわけをするための特別推定（折り畳み位置を推定しない）
         Logger.info("Two color stage: 02");
         bulletinBoard.write("<<<<folding_estimated_02;  start");
-        wireFrame_worker2.set(wireFrame_worker1.getFacePositions());
+        wireFrame_foldedCp.set(wireFrame_baseCp.getFacePositions());
         bulletinBoard.write("<<<<folding_estimated_02; end");
 
         if (Thread.interrupted()) throw new InterruptedException();
@@ -183,24 +183,24 @@ public class FoldedFigure {
     public int folding_estimated_03() throws InterruptedException {
         Logger.info("Folding stage: 03");
         bulletinBoard.write("<<<<folding_estimated_03;  start");
-        // wireFrame_worker2 has a set of points that holds the faces of the unfolded view before folding.
-        // To estimate the vertical relationship of the surface when folded, set the surface according to the wire diagram of wireFrame_worker2.
+        // wireFrame_foldedCp has a set of points that holds the faces of the unfolded view before folding.
+        // To estimate the vertical relationship of the surface when folded, set the surface according to the wire diagram of wireFrame_foldedCp.
         // Use a set of subdivided points (let's call the subdivided surface SubFace).
-        // Let wireFrame_worker3 have the set of points divided into this SubFace plane.
-        // Before passing the point set of wireFrame_worker2 to wireFrame_worker3, the point set of wireFrame_worker2 may have overlapping bars, so
+        // Let wireFrame_foldedSubdividedCp have the set of points divided into this SubFace plane.
+        // Before passing the point set of wireFrame_foldedCp to wireFrame_foldedSubdividedCp, the point set of wireFrame_foldedCp may have overlapping bars, so
         // Pass it to bb_worker and organize it as a set of line segments.
         Logger.info("＜＜＜＜＜folding_estimated_03()_____基本枝職人bb_workerはcp_worker2 Receives a set of line segments (made from wire diagrams) from and organizes them.");
-        bb_worker.set(wireFrame_worker2.getLineStore());
+        bb_worker.set(wireFrame_foldedCp.getLineStore());
         Logger.info("＜＜＜＜＜folding_estimated_03()_____基本枝職人bb_workerがbb_worker.bunkatu_seiri_for_Smen_hassei;実施。");
         //Arrangement of wire diagrams obtained by estimating the folding of overlapping line segments and intersecting line segments
         bb_worker.split_arrangement_for_SubFace_generation();
-        //The crease pattern craftsman wireFrame_worker3 receives a point set (arranged wire diagram of wireFrame_worker2) from bb_worker and divides it into SubFace.
+        //The crease pattern craftsman wireFrame_foldedSubdividedCp receives a point set (arranged wire diagram of wireFrame_foldedCp) from bb_worker and divides it into SubFace.
         Logger.info("＜＜＜＜＜folding_estimated_03()_____展開図職人cp_worker3はbb_worker Takes a streamlined set of line segments from and splits them into subfaces.");
         Logger.info("　　　folding_estimated_03()のcp_worker3.Senbunsyuugou2Tensyuugou(bb_worker.get());実施");
-        wireFrame_worker3.setLineSegmentSet(bb_worker.get());
+        wireFrame_foldedSubdividedCp.setLineSegmentSet(bb_worker.get());
 
         Logger.info("＜＜＜＜＜folding_estimated_03()_____上下表職人ct_workerは、展開図職人cp_worker3Receive a set of points from and set subface.");
-        foldedFigure_configurator.configureSubFaces(wireFrame_worker2.get(), wireFrame_worker3.get());
+        foldedFigure_configurator.configureSubFaces(wireFrame_foldedCp.get(), wireFrame_foldedSubdividedCp.get());
         //If you want to make a transparent map up to this point, you can. The transmission diagram is a SubFace diagram with density added.
 
         if (Thread.interrupted()) throw new InterruptedException();
@@ -212,14 +212,14 @@ public class FoldedFigure {
         Logger.info("＜＜＜＜＜folding_estimated_04;開始");
         bulletinBoard.write("<<<<folding_estimated_04;  start");
         //Make an upper and lower table of faces (faces in the unfolded view before folding).
-        // This includes the point set of wireFrame_worker2 (which has information on the positional relationship of the faces after folding).
-        // Use the point set of wireFrame_worker3 (which has the information of SubFace whose surface is subdivided in the wire diagram).
-        // Also, use the information on the positional relationship of the surface when folded, which wireFrame_worker1 has.
+        // This includes the point set of wireFrame_foldedCp (which has information on the positional relationship of the faces after folding).
+        // Use the point set of wireFrame_foldedSubdividedCp (which has the information of SubFace whose surface is subdivided in the wire diagram).
+        // Also, use the information on the positional relationship of the surface when folded, which wireFrame_baseCp has.
         Logger.info("＜＜＜＜＜folding_estimated_04()_____上下表職人ct_workerMake a top-bottom table of the surface (the surface of the developed view before folding).");
 
         ip1_anotherOverlapValid = FoldedFigure_Worker.HierarchyListStatus.UNKNOWN_0;
         findAnotherOverlapValid = false;
-        ip1_anotherOverlapValid = foldedFigure_configurator.HierarchyList_configure(wireFrame_worker1);   //ip1_anotherOverlapValid = A variable that stores 0 if there is an error that the front and back sides are adjacent after folding, and 1000 if there is no error.
+        ip1_anotherOverlapValid = foldedFigure_configurator.HierarchyList_configure(wireFrame_baseCp);   //ip1_anotherOverlapValid = A variable that stores 0 if there is an error that the front and back sides are adjacent after folding, and 1000 if there is no error.
         if (ip1_anotherOverlapValid == FoldedFigure_Worker.HierarchyListStatus.SUCCESSFUL_1000) {
             findAnotherOverlapValid = true;
         }
@@ -264,8 +264,8 @@ public class FoldedFigure {
 
 
     public void setAllPointStateFalse() {
-        wireFrame_worker1.setAllPointStateFalse();
-        wireFrame_worker2.setAllPointStateFalse();
+        wireFrame_baseCp.setAllPointStateFalse();
+        wireFrame_foldedCp.setAllPointStateFalse();
     }
 
     public enum EstimationOrder {
@@ -295,8 +295,17 @@ public class FoldedFigure {
     }
 
     public enum EstimationStep {
+        /**
+         * Load Cp into folded figure, set starting face
+         */
         STEP_0,
+        /**
+         * fold up Cp while keeping topology
+         */
         STEP_1,
+        /**
+         * split folded up cp on crossing lines to generate subfaces
+         */
         STEP_2,
         STEP_3,
         STEP_4,

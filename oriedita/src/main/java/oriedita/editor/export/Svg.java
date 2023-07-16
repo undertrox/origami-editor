@@ -81,8 +81,8 @@ public class Svg {
 
     public static void getMemo_wirediagram_for_svg_export(PrintWriter pw, Camera camera, FoldedFigure_Drawer foldedFigure, boolean i_fill) {
         FoldedFigure_Worker ctworker = foldedFigure.getFoldedFigure().foldedFigure_worker;
-        WireFrame_Worker orite = foldedFigure.getFoldedFigure().wireFrame_worker1;
-        PointSet otta_Men_zu = foldedFigure.getFoldedFigure().wireFrame_worker2.get();
+        WireFrame_Worker orite = foldedFigure.getFoldedFigure().wireFrame_baseCp;
+        PointSet otta_Men_zu = foldedFigure.getFoldedFigure().wireFrame_foldedCp.get();
 
         boolean flipped = camera.determineIsCameraMirrored();
 
@@ -166,8 +166,8 @@ public class Svg {
 
 
     public static void getMemo_for_svg_with_camera(PrintWriter pw, Camera camera, FoldedFigure_Drawer foldedFigure) {//折り上がり図(hyouji_flg==5)
-        WireFrame_Worker orite = foldedFigure.getFoldedFigure().wireFrame_worker1;
-        PointSet subFace_figure = foldedFigure.getFoldedFigure().wireFrame_worker3.get();
+        WireFrame_Worker orite = foldedFigure.getFoldedFigure().wireFrame_baseCp;
+        PointSet subFace_figure = foldedFigure.getFoldedFigure().wireFrame_foldedSubdividedCp.get();
         boolean front_back = camera.determineIsCameraMirrored();
 
         Point t0 = new Point();

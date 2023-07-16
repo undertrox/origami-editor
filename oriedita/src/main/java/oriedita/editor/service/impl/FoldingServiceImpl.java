@@ -203,7 +203,7 @@ public class FoldingServiceImpl implements FoldingService {
     @Override
     public void duplicate(FoldedFigure figureToDuplicate) { //Trox's stuffs
         FoldedFigure figure = figureToDuplicate;
-        LineSegmentSet lines = figure.wireFrame_worker1.getLineStore();
+        LineSegmentSet lines = figure.wireFrame_baseCp.getLineStore();
         Foldable newFigure = initFoldedFigure();
 
         //What the fuck

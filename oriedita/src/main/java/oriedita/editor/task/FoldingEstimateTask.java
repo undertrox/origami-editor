@@ -3,7 +3,9 @@ package oriedita.editor.task;
 import org.tinylog.Logger;
 import oriedita.editor.Foldable;
 import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.export.Fold;
 import oriedita.editor.swing.component.BulletinBoard;
 import origami.crease_pattern.LineSegmentSet;
 import origami.folding.FoldedFigure;
@@ -41,6 +43,8 @@ public class FoldingEstimateTask implements OrieditaTask {
         try {
             selectedFigure.setEstimationOrder(estimationOrder);
             selectedFigure.folding_estimated(creasePatternCamera, lineSegmentsForFolding);
+            Fold fold = new Fold();
+            fold.toFoldFrame(((FoldedFigure_Drawer) selectedFigure).getFoldedFigure());
         } catch (Exception e) {
             selectedFigure.estimated_initialize();
             bulletinBoard.clear();

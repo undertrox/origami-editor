@@ -3,12 +3,14 @@ package oriedita.editor.export;
 import fold.io.CustomFoldReader;
 import fold.io.CustomFoldWriter;
 import fold.model.Edge;
+import fold.model.Face;
 import fold.model.FoldEdgeAssignment;
 import fold.model.FoldFile;
 import fold.model.FoldFrame;
 import fold.model.Vertex;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.tinylog.Logger;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
@@ -21,6 +23,8 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
+import origami.folding.FoldedFigure;
+import origami.folding.HierarchyList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -158,6 +162,41 @@ public class Fold {
         return toFoldSave(save, s);
     }
 
+    public FoldFrame toFoldFrame(FoldedFigure foldedFigure) {
+        FoldFrame frame = new FoldFrame();
+        frame.setAttributes(List.of("2D"));
+        frame.setClasses(List.of("foldedForm"));
+
+        loadPointSetToFrame(frame, foldedFigure.wireFrame_foldedCp.get(), true, foldedFigure.wireFrame_baseCp);
+        HierarchyList hl = foldedFigure.foldedFigure_worker.hierarchyList;
+        for (int i = 1; i <= hl.getFacesTotal(); i++) {
+            for (int j = i + 1; j <= hl.getFacesTotal(); j++) {
+                if (i == j) continue;
+                int order = hl.get(i, j);
+                if (order == HierarchyList.UNKNOWN_N50 || order == HierarchyList.EMPTY_N100) continue;
+
+                FoldFrame.FaceOrder fo = new FoldFrame.FaceOrder();
+                fo.setFace1(frame.getFaces().get(i-1));
+                fo.setFace2(frame.getFaces().get(j-1));
+                fo.setFace1AboveFace2(
+                           (order == HierarchyList.BELOW_0 && foldedFigure.wireFrame_baseCp.getIFacePosition(j) % 2 == 0)
+                        || (order == HierarchyList.ABOVE_1 && foldedFigure.wireFrame_baseCp.getIFacePosition(j) % 2 == 1));
+
+                frame.getFaceOrders().add(fo);
+            }
+        }
+        FoldFile f = new FoldFile();
+        f.setRootFrame(frame);
+        File file = new File("test.fold");
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            CustomFoldWriter<FoldFile> foldFileCustomFoldWriter = new CustomFoldWriter<>(fileOutputStream);
+            foldFileCustomFoldWriter.write(f);
+        } catch (IOException e) {
+            Logger.error(e);
+        }
+        return frame;
+    }
+
     public OrieditaFoldFile toFoldSave(Save save, LineSegmentSet lineSegmentSet) throws InterruptedException {
         WireFrame_Worker wireFrame_worker = new WireFrame_Worker(3.0);
         wireFrame_worker.setLineSegmentSetWithoutFaceOccurence(lineSegmentSet);
@@ -167,31 +206,53 @@ public class Fold {
         foldFile.setCreator("oriedita");
         FoldFrame rootFrame = foldFile.getRootFrame();
 
-        for (int i = 1; i <= pointSet.getNumPoints(); i++) {
-            Vertex vertex = new Vertex();
-            vertex.setX(pointSet.getPoint(i).getX());
-            vertex.setY(pointSet.getPoint(i).getY());
-            rootFrame.getVertices().add(vertex);
-        }
-
-        for (int i = 1; i <= pointSet.getNumLines(); i++) {
-            Edge edge = new Edge();
-            edge.setAssignment(getAssignment(pointSet.getColor(i)));
-            edge.setFoldAngle(getFoldAngle(pointSet.getColor(i)));
-            Vertex startVertex = rootFrame.getVertices().get(pointSet.getBegin(i) - 1);
-            Vertex endVertex = rootFrame.getVertices().get(pointSet.getEnd(i) - 1);
-
-            edge.setStart(startVertex);
-            edge.setEnd(endVertex);
-
-            rootFrame.getEdges().add(edge);
-        }
+        loadPointSetToFrame(rootFrame, pointSet, false, null);
 
         foldFile.setCircles(save.getCircles());
         foldFile.setTexts(save.getTexts());
         foldFile.setVersion(ResourceUtil.getVersionFromManifest());
 
         return foldFile;
+    }
+
+    private void loadPointSetToFrame(FoldFrame frame, PointSet pointSet, boolean loadFaces, WireFrame_Worker baseCp) {
+        for (int i = 1; i <= pointSet.getNumPoints(); i++) {
+            Vertex vertex = new Vertex();
+            vertex.setX(pointSet.getPoint(i).getX());
+            vertex.setY(pointSet.getPoint(i).getY());
+            frame.getVertices().add(vertex);
+        }
+
+        for (int i = 1; i <= pointSet.getNumLines(); i++) {
+            Edge edge = new Edge();
+            edge.setAssignment(getAssignment(pointSet.getColor(i)));
+            edge.setFoldAngle(getFoldAngle(pointSet.getColor(i)));
+            Vertex startVertex = frame.getVertices().get(pointSet.getBegin(i) - 1);
+            Vertex endVertex = frame.getVertices().get(pointSet.getEnd(i) - 1);
+
+            edge.setStart(startVertex);
+            edge.setEnd(endVertex);
+
+            frame.getEdges().add(edge);
+        }
+        if (!loadFaces) {
+            return;
+        }
+        try {
+            baseCp.getFacePositions();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        for (int i = 1; i <= pointSet.getNumFaces(); i++) {
+            Face face = new Face();
+            origami.folding.element.Face face1 = pointSet.getFace(i);
+            for (int j = face1.getNumPoints(); j >= 1; j--) {
+                Vertex p1 = frame.getVertices().get(face1.getPointId(j)-1);
+                face.getVertices().add(p1);
+            }
+            frame.getFaces().add(face);
+        }
     }
 
     private double getFoldAngle(LineColor color) {
