@@ -36,8 +36,19 @@ public class CreasePatternRendererImpl implements CreasePatternRenderer {
 
     }
 
-    @Override
-    public void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
+    public void drawWithCamera(
+            Graphics g,
+            boolean displayComments,
+            boolean displayCpLines,
+            boolean displayAuxLines,
+            boolean displayAuxLiveLines,
+            float lineWidth,
+            LineStyle lineStyle,
+            float auxLineWidth,
+            int p0x_max,
+            int p0y_max,
+            boolean showMarkers,
+            boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         Graphics2D g2 = (Graphics2D) g;
         var cpCamera = this.cpCamera;
         // unwrap proxy for performance in big cps
@@ -56,9 +67,9 @@ public class CreasePatternRendererImpl implements CreasePatternRenderer {
 
         //Drawing auxiliary strokes (non-interfering with polygonal lines)
         if (displayAuxLiveLines) {
-            g2.setStroke(new BasicStroke(f_h_WireframeLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//Line thickness and shape of the end of the line
+            g2.setStroke(new BasicStroke(auxLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//Line thickness and shape of the end of the line
             for (var as : cpWorker.getAuxLines().getLineSegmentsIterable()) {
-                DrawingUtil.drawAuxLiveLine(g, as, cpCamera, lineWidth, applicationModel.getPointSize(), f_h_WireframeLineWidth);
+                DrawingUtil.drawAuxLiveLine(g, as, cpCamera, lineWidth, applicationModel.getPointSize(), auxLineWidth);
             }
         }
 
@@ -117,14 +128,15 @@ public class CreasePatternRendererImpl implements CreasePatternRenderer {
         }
 
         //Draw the center of the camera with a cross
-        if (i_mejirusi_display) {
+        if (showMarkers) {
             DrawingUtil.cross(g, cpCamera.object2TV(cpCamera.getCameraPosition()), 5.0, 2.0, LineColor.CYAN_3);
         }
-
+        boolean useRounded = applicationModel.getRoundedEnds();
+        var pointSize = applicationModel.getPointSize();
         //円を描く　
         if (displayAuxLines) {
             for (Circle circle : foldLineSet.getCircles()) {
-                DrawingUtil.drawCircle(g, circle, cpCamera, lineWidth, applicationModel.getPointSize());
+                DrawingUtil.drawCircle(g, circle, cpCamera, lineWidth, pointSize);
             }
         }
 
@@ -137,8 +149,6 @@ public class CreasePatternRendererImpl implements CreasePatternRenderer {
             }
         }
 
-        boolean useRounded = applicationModel.getRoundedEnds();
-        var pointSize = applicationModel.getPointSize();
         //展開図の描画 補助活線のみ
         if (displayAuxLines) {
             for (var s : lines) {
