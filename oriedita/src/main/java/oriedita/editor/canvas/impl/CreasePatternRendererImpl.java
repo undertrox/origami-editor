@@ -1,5 +1,6 @@
 package oriedita.editor.canvas.impl;
 
+import org.jboss.weld.proxy.WeldClientProxy;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.LineStyle;
@@ -17,6 +18,7 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -31,10 +33,18 @@ public class CreasePatternRendererImpl implements CreasePatternRenderer {
         this.applicationModel = applicationModel;
         this.canvasModel = canvasModel;
         this.cpCamera = cpCamera;
+
     }
 
+    @Override
     public void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         Graphics2D g2 = (Graphics2D) g;
+        var cpCamera = this.cpCamera;
+        // unwrap proxy for performance in big cps
+        if (cpCamera instanceof WeldClientProxy proxy) {
+            cpCamera = (Camera) proxy.getMetadata().getContextualInstance();
+        }
+
         var grid = cpWorker.getGrid();
         var gridInputAssist = applicationModel.getDisplayGridInputAssist();
 
@@ -198,5 +208,20 @@ public class CreasePatternRendererImpl implements CreasePatternRenderer {
             g.drawString("1/" + grid.getGridSize(), 10, 55);
             cpWorker.getTextWorker().draw(g2, cpCamera);
         }
+    }
+
+    @Override
+    public void drawWithGraphics(Graphics g, Dimension size, boolean hideOperationFrame) {
+        drawWithCamera(g,
+                applicationModel.getDisplayComments(),
+                applicationModel.getDisplayCpLines(),
+                applicationModel.getDisplayAuxLines(),
+                applicationModel.getDisplayLiveAuxLines(),
+                applicationModel.determineCalculatedLineWidth(),
+                applicationModel.getLineStyle(),
+                applicationModel.getAuxLineWidth(),
+                size.width, size.height,
+                applicationModel.getDisplayMarkings(),
+                hideOperationFrame);
     }
 }

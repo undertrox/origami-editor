@@ -5,7 +5,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
@@ -64,23 +63,9 @@ public class CanvasUI extends JPanel {
      */
     private Point mousePositionOnCanvas = new Point();//マウスのTV座標上の位置
     private boolean hideOperationFrame = false;
-    private boolean antiAlias;
-
-    private boolean displayPointSpotlight;
-    private boolean displayPointOffset;
-    private boolean displayGridInputAssist;
-    private boolean displayComments;
-    private boolean displayCpLines;
-    private boolean displayAuxLines;
-    private boolean displayLiveAuxLines;
-    private boolean displayMarkings;
-    private boolean displayCreasePatternOnTop;
     private Background_camera h_cam = new Background_camera();
     // Canvas width and height
     private Dimension dim;
-    private LineStyle lineStyle;
-    private float lineWidth;
-    private float auxLineWidth;
 
     @Inject
     public CanvasUI(
@@ -224,7 +209,7 @@ public class CanvasUI extends JPanel {
         //格子表示
 
         //基準面の表示
-        if (displayMarkings && selectedFigure != null) {
+        if (applicationModel.getDisplayMarkings() && selectedFigure != null) {
             if (selectedFigure.getFoldedFigure().displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
                 selectedFigure.getWireFrame_worker_drawer1().drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
@@ -233,12 +218,14 @@ public class CanvasUI extends JPanel {
         double d_width = creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
 
         //展開図表示
-        mainCreasePatternRenderer.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
-        DrawingSettings settings = new DrawingSettings(lineWidth, lineStyle, dim.height, dim.width, applicationModel.getRoundedEnds());
+        mainCreasePatternRenderer.drawWithGraphics(bufferGraphics, dim, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        DrawingSettings settings = new DrawingSettings(
+                applicationModel.determineCalculatedLineWidth(), applicationModel.getLineStyle(),
+                dim.height, dim.width, applicationModel.getRoundedEnds());
         if (activeMouseHandler != null) {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
         }
-        if (displayComments) {
+        if (applicationModel.getDisplayComments()) {
             //展開図情報の文字表示
             bufferGraphics.setColor(Colors.get(Color.black));
 
@@ -251,7 +238,7 @@ public class CanvasUI extends JPanel {
                 bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
             }
 
-            if (displayGridInputAssist) {
+            if (applicationModel.getDisplayGridInputAssist()) {
                 Point gridIndex = new Point(mainCreasePatternWorker.getGridPosition(mousePositionOnCanvas));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                 double dx_ind = gridIndex.getX();
@@ -280,27 +267,27 @@ public class CanvasUI extends JPanel {
         //折り上がりの各種お絵かき
         for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
             OZi = foldedFiguresList.getElementAt(i_oz);
-            OZi.foldUp_draw(bufferGraphics, displayMarkings, i_oz + 1, OZi == foldedFiguresList.getSelectedItem());
+            OZi.foldUp_draw(bufferGraphics, applicationModel.getDisplayMarkings(), i_oz + 1, OZi == foldedFiguresList.getSelectedItem());
         }
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
-        if (displayCreasePatternOnTop) {
-            mainCreasePatternRenderer.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+        if (applicationModel.getDisplayCreasePatternOnTop()) {
+            mainCreasePatternRenderer.drawWithGraphics(bufferGraphics, dim, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス
         //アンチェイリアス　オフ
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, applicationModel.getAntiAlias() ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
 
         //Flashlight (dot) search range
-        if (displayPointSpotlight) {
+        if (applicationModel.getDisplayPointSpotlight()) {
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(Colors.get(new Color(255, 240, 0, 230)));
             g2.draw(new Ellipse2D.Double(mousePositionOnCanvas.getX() - d_width, mousePositionOnCanvas.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
 
         //Central indicator
-        if (displayPointOffset) {
+        if (applicationModel.getDisplayPointOffset()) {
             g2.setStroke(new BasicStroke(1.0f));
             g2.setColor(Colors.get(Color.black));
             g2.drawLine((int) (mousePositionOnCanvas.getX()), (int) (mousePositionOnCanvas.getY()),
@@ -344,30 +331,8 @@ public class CanvasUI extends JPanel {
 
     }
 
-    public void setData(ApplicationModel applicationModel) {
-        antiAlias = applicationModel.getAntiAlias();
-        lineWidth = applicationModel.determineCalculatedLineWidth();
-        auxLineWidth = applicationModel.determineCalculatedAuxLineWidth();
-        lineStyle = applicationModel.getLineStyle();
-        displayPointSpotlight = applicationModel.getDisplayPointSpotlight();
-        displayPointOffset = applicationModel.getDisplayPointOffset();
-        displayGridInputAssist = applicationModel.getDisplayGridInputAssist();
-        displayComments = applicationModel.getDisplayComments();
-        displayCpLines = applicationModel.getDisplayCpLines();
-        displayAuxLines = applicationModel.getDisplayAuxLines();
-        displayLiveAuxLines = applicationModel.getDisplayLiveAuxLines();
-    }
-
     public void setActiveMouseHandler(MouseModeHandler activeMouseHandler) {
         this.activeMouseHandler = activeMouseHandler;
-    }
-
-    public void setDisplayMarkings(boolean displayMarkings) {
-        this.displayMarkings = displayMarkings;
-    }
-
-    public void setDisplayCreasePatternOnTop(boolean displayCreasePatternOnTop) {
-        this.displayCreasePatternOnTop = displayCreasePatternOnTop;
     }
 
     public Background_camera getH_cam() {
