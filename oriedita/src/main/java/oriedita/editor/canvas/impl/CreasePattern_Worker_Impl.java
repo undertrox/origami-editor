@@ -1,11 +1,8 @@
 package oriedita.editor.canvas.impl;
 
 import org.tinylog.Logger;
-import oriedita.editor.Colors;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
-import oriedita.editor.canvas.LineStyle;
-import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.OperationFrame;
 import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.databinding.AngleSystemModel;
@@ -17,7 +14,6 @@ import oriedita.editor.databinding.GridModel;
 import oriedita.editor.databinding.SelectedTextModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
-import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.HistoryState;
@@ -25,7 +21,6 @@ import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.task.CheckCAMVTask;
 import origami.Epsilon;
 import origami.crease_pattern.CustomLineTypes;
-import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
@@ -44,10 +39,7 @@ import origami.crease_pattern.worker.foldlineset.Fix2;
 import origami.crease_pattern.worker.foldlineset.InsideToAux;
 import origami.crease_pattern.worker.foldlineset.OrganizeCircles;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -100,7 +92,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private final FoldLineSet auxLines;    //Store auxiliary lines
     private int foldLineDividingNumber = 1;
     private int numPolygonCorners = 5;
-    private String text_cp_setumei;
     private String s_title; //Used to hold the title that appears at the top of the frame
     private boolean check1 = false;//=0 check1を実施しない、1=実施する　　
     private boolean check2 = false;//=0 check2を実施しない、1=実施する　
@@ -151,7 +142,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         this.operationFrame = new OperationFrame();
 
-        text_cp_setumei = "1/";
         s_title = "no title";
     }
 
@@ -164,7 +154,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     public void setGridConfigurationData(GridModel gridModel) {
         grid.setGridConfigurationData(gridModel);
-        text_cp_setumei = "1/" + grid.getGridSize();
         calculateDecisionWidth();
     }
 
@@ -226,6 +215,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         }
 
         textModel.reset();
+    }
+
+    public boolean isCAMVCalculationRunning() {
+        return camvTaskExecutor.isTaskRunning();
     }
 
     public String setMemo_for_redo_undo(Save save) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
@@ -361,7 +354,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public void saveAdditionalInformation(Save memo1) {
         Camera camera = new Camera();
-        camera.setCamera(this.camera);
+        camera.setCamera(creasePatternCamera);
         memo1.setCreasePatternCamera(camera);
 
         textWorker.getSave(memo1);
@@ -431,173 +424,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public void auxRecord() {
         auxHistoryState.record(h_getSave());
-    }
-
-    //------------------------------------------------------------------------------
-    //Drawing the basic branch
-    //------------------------------------------------------------------------------
-    @Override
-    public void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
-        Graphics2D g2 = (Graphics2D) g;
-
-        //Drawing grid lines
-        grid.draw(g, camera, p0x_max, p0y_max, gridInputAssist, applicationModel.getMinGridUnitSize());
-
-        BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-        g2.setStroke(BStroke);//Line thickness and shape of the end of the line
-
-        //Drawing auxiliary strokes (non-interfering with polygonal lines)
-        if (displayAuxLiveLines) {
-            g2.setStroke(new BasicStroke(f_h_WireframeLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//Line thickness and shape of the end of the line
-            for (var as : auxLines.getLineSegmentsIterable()) {
-                DrawingUtil.drawAuxLiveLine(g, as, camera, lineWidth, pointSize, f_h_WireframeLineWidth);
-            }
-        }
-
-        //check結果の表示
-
-        g2.setStroke(new BasicStroke(15.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-
-        //Check1Senbには0番目からsize()-1番目までデータが入っている
-        if (check1) {
-            for (LineSegment s_temp : foldLineSet.getCheck1LineSegments()) {
-                DrawingUtil.pointingAt1(g, camera.object2TV(s_temp));
-            }
-        }
-
-        if (check2) {
-            for (LineSegment s_temp : foldLineSet.getCheck2LineSegments()) {
-                DrawingUtil.pointingAt2(g, camera.object2TV(s_temp));
-            }
-        }
-
-        g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-
-
-        //Check4Senbには0番目からsize()-1番目までデータが入っている
-        //Logger.info("foldLineSet.check4_size() = "+foldLineSet.check4_size());
-        if (check4) {
-            for (FlatFoldabilityViolation violation : foldLineSet.getViolations()) {
-                DrawingUtil.drawViolation(g2, camera.object2TV(violation.getPoint()), violation,
-                        applicationModel.getCheck4ColorTransparency(), applicationModel.getAdvancedCheck4Display());
-            }
-
-            if (displayComments) {
-
-                if (camvTaskExecutor.isTaskRunning()) {
-                    g.setColor(Colors.get(Color.orange));
-                    g.drawString("... cAMV Errors", p0x_max - 100, 10);
-                } else {
-                    int numErrors = foldLineSet.getViolations().size();
-                    if (numErrors == 0) {
-                        g.setColor(Colors.get(Color.green));
-                    } else {
-                        g.setColor(Colors.get(Color.red));
-                    }
-
-                    g.drawString(numErrors + " cAMV Errors", p0x_max - 100, 10);
-                }
-            }
-        }
-
-
-        //Check3Senbには0番目からsize()-1番目までデータが入っている
-        if (check3) {
-            for (LineSegment s_temp : foldLineSet.getCheck3LineSegments()) {
-                DrawingUtil.pointingAt3(g, camera.object2TV(s_temp));
-            }
-        }
-
-        //Draw the center of the camera with a cross
-        if (i_mejirusi_display) {
-            DrawingUtil.cross(g, camera.object2TV(camera.getCameraPosition()), 5.0, 2.0, LineColor.CYAN_3);
-        }
-
-        //円を描く　
-        if (displayAuxLines) {
-            for (Circle circle : foldLineSet.getCircles()) {
-                DrawingUtil.drawCircle(g, circle, camera, lineWidth, pointSize);
-            }
-        }
-
-        var lines = foldLineSet.getLineSegmentsCollection();
-        //selectの描画
-        g2.setStroke(new BasicStroke(lineWidth * 2.0f + 2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
-        for (var s : lines) {
-            if (s.getSelected() == 2) {
-                DrawingUtil.drawSelectLine(g, s, camera);
-            }
-        }
-
-        boolean useRounded = applicationModel.getRoundedEnds();
-        //展開図の描画 補助活線のみ
-        if (displayAuxLines) {
-            for (var s : lines) {
-                if (s.getColor() == LineColor.CYAN_3) {
-                    DrawingUtil.drawAuxLine(g, s, camera, lineWidth, pointSize, useRounded);
-                }
-            }
-        }
-
-        //展開図の描画  補助活線以外の折線
-        if (displayCpLines) {
-            g.setColor(Colors.get(Color.black));
-            for (var s : lines) {
-                if (s.getColor() != LineColor.CYAN_3 && s.getColor() != LineColor.RED_1 && s.getColor() != LineColor.BLACK_0) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
-                }
-            }
-            for (var s : lines) {
-                if (s.getColor() == LineColor.RED_1) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
-                }
-            }
-            for (var s : lines) {
-                if (s.getColor() == LineColor.BLACK_0) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
-                }
-            }
-        }
-
-        //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
-        if (!hideOperationFrame && canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
-            Point p1 = camera.TV2object(operationFrame.getP1());
-            Point p2 = camera.TV2object(operationFrame.getP2());
-            Point p3 = camera.TV2object(operationFrame.getP3());
-            Point p4 = camera.TV2object(operationFrame.getP4());
-
-            lineStep.set(0, new LineSegment(p1, p2, LineColor.GREEN_6));
-            lineStep.set(1, new LineSegment(p2, p3, LineColor.GREEN_6));
-            lineStep.set(2, new LineSegment(p3, p4, LineColor.GREEN_6));
-            lineStep.set(3, new LineSegment(p4, p1, LineColor.GREEN_6));
-        }
-
-        //線分入力時の一時的なs_step線分を描く　
-
-        if (!hideOperationFrame && ((canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4))) {
-            for (LineSegment s : lineStep) {
-                DrawingUtil.drawLineStep(g, s, camera, lineWidth, gridInputAssist);
-            }
-        }
-        //候補入力時の候補を描く//Logger.info("_");
-        g2.setStroke(new BasicStroke(lineWidth + 0.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A
-
-        for (LineSegment s : lineCandidate) {
-            DrawingUtil.drawLineCandidate(g, s, camera, pointSize);
-        }
-
-        g.setColor(Colors.get(Color.black));
-
-        for (Circle c : circleStep) {
-            DrawingUtil.drawCircleStep(g, c, camera);
-        }
-
-        g.setColor(Colors.get(Color.black));
-
-        if (displayComments) {
-            g.drawString(text_cp_setumei, 10, 55);
-            textWorker.draw(g2, camera);
-        }
     }
 
     @Override

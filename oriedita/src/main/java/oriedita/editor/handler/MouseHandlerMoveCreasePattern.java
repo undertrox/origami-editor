@@ -3,7 +3,6 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
@@ -19,13 +18,11 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
 
     private final Camera creasePatternCamera;
     private final FoldedFiguresList foldedFiguresList;
-    private final CreasePattern_Worker mainCreasePatternWorker;
 
     @Inject
-    public MouseHandlerMoveCreasePattern(@Named("creasePatternCamera") Camera creasePatternCamera, FoldedFiguresList foldedFiguresList, @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker) {
+    public MouseHandlerMoveCreasePattern(@Named("creasePatternCamera") Camera creasePatternCamera, FoldedFiguresList foldedFiguresList) {
         this.creasePatternCamera = creasePatternCamera;
         this.foldedFiguresList = foldedFiguresList;
-        this.mainCreasePatternWorker = mainCreasePatternWorker;
     }
 
     @Override
@@ -47,7 +44,6 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     @Override
     public void mouseDragged(Point p0) {
         creasePatternCamera.displayPositionMove(mouse_temp0.delta(p0));
-        mainCreasePatternWorker.setCamera(creasePatternCamera);
 
 //20180225追加
         for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
@@ -67,7 +63,6 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     @Override
     public void mouseReleased(Point p0) {
         creasePatternCamera.displayPositionMove(mouse_temp0.delta(p0));
-        mainCreasePatternWorker.setCamera(creasePatternCamera);
 
 
 //20180225追加

@@ -6,8 +6,8 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
-import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.save.Save;
+import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Circle;
@@ -16,7 +16,6 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -76,11 +75,6 @@ public interface CreasePattern_Worker {
     void auxRedo();
 
     void auxRecord();
-
-    //------------------------------------------------------------------------------
-    //Drawing the basic branch
-    //------------------------------------------------------------------------------
-    void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame);
 
     void resetCircleStep();
 
@@ -264,6 +258,7 @@ public interface CreasePattern_Worker {
     void removePropertyChangeListener(PropertyChangeListener listener);
 
     void setGridConfigurationData(GridModel gridModel);
+    boolean isCAMVCalculationRunning();
 
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換
     enum FourPointStep {

@@ -12,6 +12,7 @@ import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
+import oriedita.editor.drawing.CreasePatternRenderer;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Background_camera;
 import oriedita.editor.drawing.tools.Camera;
@@ -45,6 +46,7 @@ public class CanvasUI extends JPanel {
     private final BackgroundModel backgroundModel;
     private final CanvasModel canvasModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
+    private final CreasePatternRenderer mainCreasePatternRenderer;
     private final AnimationService animationService;
     private final ApplicationModel applicationModel;
     private final BulletinBoard bulletinBoard;
@@ -87,6 +89,7 @@ public class CanvasUI extends JPanel {
             BackgroundModel backgroundModel,
             CanvasModel canvasModel,
             @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+            @Named("mainCreasePattern_Renderer") CreasePatternRenderer mainCreasePatternRenderer,
             AnimationService animationService,
             ApplicationModel applicationModel,
             BulletinBoard bulletinBoard,
@@ -98,6 +101,7 @@ public class CanvasUI extends JPanel {
         this.backgroundModel = backgroundModel;
         this.canvasModel = canvasModel;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.mainCreasePatternRenderer = mainCreasePatternRenderer;
         this.animationService = animationService;
         this.applicationModel = applicationModel;
         this.bulletinBoard = bulletinBoard;
@@ -157,11 +161,12 @@ public class CanvasUI extends JPanel {
         Graphics2D g2 = (Graphics2D) bufferGraphics;
         animationService.update();
 
-        BasicStroke BStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+        BasicStroke BStroke = new BasicStroke(applicationModel.getLineWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
         g2.setStroke(BStroke);//線の太さや線の末端の形状
 
         //アンチエイリアス　オフ
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, applicationModel.getAntiAlias() ?
+                RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
 
         g2.setBackground(Colors.get(Color.WHITE));    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
         //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
@@ -228,7 +233,7 @@ public class CanvasUI extends JPanel {
         double d_width = creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
 
         //展開図表示
-        mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        mainCreasePatternRenderer.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
         DrawingSettings settings = new DrawingSettings(lineWidth, lineStyle, dim.height, dim.width, applicationModel.getRoundedEnds());
         if (activeMouseHandler != null) {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
@@ -280,7 +285,7 @@ public class CanvasUI extends JPanel {
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
         if (displayCreasePatternOnTop) {
-            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+            mainCreasePatternRenderer.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス

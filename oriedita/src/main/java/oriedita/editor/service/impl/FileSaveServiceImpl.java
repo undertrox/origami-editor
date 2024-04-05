@@ -11,8 +11,9 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.databinding.FileModel;
-import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
+import oriedita.editor.export.api.FileExporter;
+import oriedita.editor.export.api.FileImporter;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.ApplicationModelPersistenceService;
@@ -23,8 +24,6 @@ import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.FileDialogUtil;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
-import oriedita.editor.export.api.FileExporter;
-import oriedita.editor.export.api.FileImporter;
 
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
@@ -56,7 +55,6 @@ import static oriedita.editor.swing.dialog.FileDialogUtil.saveFileDialog;
 @ApplicationScoped
 public class FileSaveServiceImpl implements FileSaveService {
     private final FrameProvider frame;
-    private final Camera creasePatternCamera;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FileModel fileModel;
     private final ApplicationModel applicationModel;
@@ -80,7 +78,6 @@ public class FileSaveServiceImpl implements FileSaveService {
             FrameProvider frame,
             @Any Instance<FileImporter> importers,
             @Any Instance<FileExporter> exporters,
-            @Named("creasePatternCamera") Camera creasePatternCamera,
             @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
             FileModel fileModel,
             ApplicationModel applicationModel,
@@ -90,7 +87,6 @@ public class FileSaveServiceImpl implements FileSaveService {
         this.frame = frame;
         this.importers = importers;
         this.exporters = exporters;
-        this.creasePatternCamera = creasePatternCamera;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.fileModel = fileModel;
         this.applicationModel = applicationModel;
@@ -116,8 +112,7 @@ public class FileSaveServiceImpl implements FileSaveService {
             //Initialization of development drawing started
             resetService.developmentView_initialization();
             //Deployment parameter initialization
-
-            mainCreasePatternWorker.setCamera(creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            //20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
             mainCreasePatternWorker.setSave_for_reading(memo_temp);
             mainCreasePatternWorker.record();
         }
@@ -254,7 +249,7 @@ public class FileSaveServiceImpl implements FileSaveService {
 
             //Initialization of folding prediction map started
 
-            mainCreasePatternWorker.setCamera(creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            //20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
             mainCreasePatternWorker.setSave_for_reading(memo_temp);
             mainCreasePatternWorker.record();
         }

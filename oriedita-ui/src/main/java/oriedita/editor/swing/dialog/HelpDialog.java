@@ -103,23 +103,23 @@ public class HelpDialog {
                       FoldedFiguresList foldedFiguresList) {
         this.frameProvider = frameProvider;
         this.applicationModel = applicationModel;
-        this.canvasUI = new CanvasUI(creasePatternCamera, foldingExecutor, backgroundModel, canvasModel,
-                mainCreasePatternWorker, animationService, applicationModel, bulletinBoard, foldedFigureModel,
-                foldedFiguresList);
+//        this.canvasUI = new CanvasUI(creasePatternCamera, foldingExecutor, backgroundModel, canvasModel,
+//                mainCreasePatternWorker, animationService, applicationModel, bulletinBoard, foldedFigureModel,
+//                foldedFiguresList);
     }
 
     public void start(Point canvasLocation, Dimension canvasSize) {
         $$$setupUI$$$();
 
-        canvasUI.setLayout(null);
-        canvasUI.setDim(new Dimension(300, 300));
-        canvasUI.setMinimumSize(new Dimension(300, 300));
-        canvasUI.setPreferredSize(new Dimension(300, 300));
-        canvasUI.setData(applicationModel);
+        //canvasUI.setLayout(null);
+        //canvasUI.setDim(new Dimension(300, 300));
+        //canvasUI.setMinimumSize(new Dimension(300, 300));
+        //canvasUI.setPreferredSize(new Dimension(300, 300));
+        //canvasUI.setData(applicationModel);
         JPanel p = new JPanel();
         p.setMinimumSize(new Dimension(300, 300));
         p.setPreferredSize(new Dimension(300, 300));
-        p.add(canvasUI);
+        //p.add(canvasUI);
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
