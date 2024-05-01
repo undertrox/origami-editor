@@ -26,6 +26,7 @@ import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.factory.ActionFactory;
 import oriedita.editor.handler.FoldedFigureOperationMode;
+import oriedita.editor.swing.dialog.ImageExportDialog;
 import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -67,11 +68,16 @@ public class ActionRegistrationService {
     @Inject
     FoldedFiguresList foldedFiguresList;
     @Inject
+    @Named("mainCameraModel")
     CameraModel cameraModel;
     @Inject
     ButtonService buttonService;
     @Inject
+    @Named("main_Canvas")
     Canvas canvas;
+
+    @Inject
+    ImageExportDialog imageExportDialog;
 
     @Inject ActionService actionService;
 
@@ -187,6 +193,7 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.del_selected_senbun();
             mainCreasePatternWorker.record();
         }));
+        actionService.registerAction(ActionType.openExportDialogAction, new LambdaAction(() -> imageExportDialog.setVisible(true)));
 
         // - line edit actions
         actionService.registerAction(ActionType.v_del_allAction, new LambdaAction(mainCreasePatternWorker::v_del_all));

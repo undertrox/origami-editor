@@ -1,6 +1,5 @@
 package oriedita.editor;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
@@ -12,8 +11,8 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.MouseWheelTarget;
 import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.databinding.AngleSystemModel;
-import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
+import oriedita.editor.databinding.BaseApplicationModel;
 import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
@@ -62,14 +61,13 @@ import java.util.Set;
 /**
  * Panel in the center of the main view.
  */
-@ApplicationScoped
 public class Canvas implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
     private final BackgroundModel backgroundModel;
     private final BulletinBoard bulletinBoard;
-    private final ApplicationModel applicationModel;
+    private final BaseApplicationModel applicationModel;
     private final CameraModel creasePatternCameraModel;
     private final FoldedFigureModel foldedFigureModel;
     private final GridModel gridModel;
@@ -82,7 +80,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private final AnimationService animationService;
     private MouseModeHandler activeMouseHandler;
 
-    private final Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
+    //マウスのTV座標上の位置
 
 
     private TextEditingArea cpTextEditingArea;
@@ -91,8 +89,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     private MouseMode mouseMode;
-
-    private boolean mouseWheelMovesCreasePattern;
 
     private final Camera creasePatternCamera;
 
@@ -119,25 +115,27 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     @Inject
-    public Canvas(@Named("creasePatternCamera") Camera creasePatternCamera,
-                  FrameProvider frameProvider,
-                  @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
-                  Instance<CanvasUI> canvasUIProvider,
-                  FoldedFiguresList foldedFiguresList,
-                  BackgroundModel backgroundModel,
-                  BulletinBoard bulletinBoard,
-                  ApplicationModel applicationModel,
-                  CameraModel creasePatternCameraModel,
-                  FoldedFigureModel foldedFigureModel,
-                  GridModel gridModel,
-                  @Any Instance<MouseModeHandler> handlerList,
-                  AngleSystemModel angleSystemModel,
-                  FoldedFigureCanvasSelectService foldedFigureCanvasSelectService,
-                  @Any CanvasModel canvasModel,
-                  TextWorker textWorker,
-                  SelectedTextModel textModel,
-                  AnimationService animationService,
-                  ButtonService buttonService) {
+    public Canvas(
+            @Named("creasePatternCamera") Camera creasePatternCamera,
+            FrameProvider frameProvider,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+            Instance<CanvasUI> canvasUIProvider,
+            FoldedFiguresList foldedFiguresList,
+            BackgroundModel backgroundModel,
+            BulletinBoard bulletinBoard,
+            BaseApplicationModel applicationModel,
+            @Named("mainCameraModel") CameraModel creasePatternCameraModel,
+            FoldedFigureModel foldedFigureModel,
+            GridModel gridModel,
+            @Any Instance<MouseModeHandler> handlerList,
+            AngleSystemModel angleSystemModel,
+            FoldedFigureCanvasSelectService foldedFigureCanvasSelectService,
+            @Any CanvasModel canvasModel,
+            TextWorker textWorker,
+            SelectedTextModel textModel,
+            AnimationService animationService,
+            ButtonService buttonService
+    ) {
         this.canvasUI = canvasUIProvider.get();
         this.creasePatternCamera = creasePatternCamera;
         this.frameProvider = frameProvider;
@@ -169,7 +167,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
         cpTextEditingArea.setupListeners();
 
-        applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
+        applicationModel.addPropertyChangeListener(e -> canvasUI.repaint());
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
         backgroundModel.addPropertyChangeListener(e -> setData(e, backgroundModel));
 
@@ -526,7 +524,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (mouseWheelMovesCreasePattern) {
+        if (applicationModel.getMouseWheelMovesCreasePattern()) {
             Point p = e2p(e);
             MouseWheelTarget target = foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p);
 
@@ -550,16 +548,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             canvasUI.setMousePosition(p);
             canvasUI.repaint();
         }
-    }
-
-    // -----------------------------------mmmmmmmmmmmmmm-------
-
-
-    public void setData(ApplicationModel applicationModel) {
-        Logger.info("repainting");
-        mouseWheelMovesCreasePattern = applicationModel.getMouseWheelMovesCreasePattern();
-        Logger.info("repainting");
-        canvasUI.repaint();
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {

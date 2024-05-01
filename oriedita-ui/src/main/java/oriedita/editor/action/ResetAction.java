@@ -21,6 +21,7 @@ public class ResetAction extends AbstractOrieditaAction{
     @Inject @Named("mainCreasePattern_Worker")
     CreasePattern_Worker mainCreasePatternWorker;
     @Inject
+    @Named("mainCameraModel")
     CameraModel creasePatternCameraModel;
 
     @Inject

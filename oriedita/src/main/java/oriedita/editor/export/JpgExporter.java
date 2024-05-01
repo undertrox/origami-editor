@@ -2,6 +2,7 @@ package oriedita.editor.export;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import oriedita.editor.Canvas;
 import oriedita.editor.save.Save;
 import oriedita.editor.export.api.FileExporter;
@@ -14,7 +15,7 @@ public class JpgExporter implements FileExporter {
     private final Canvas canvas;
 
     @Inject
-    public JpgExporter(Canvas canvas) {
+    public JpgExporter(@Named("main_Canvas") Canvas canvas) {
         this.canvas = canvas;
     }
 

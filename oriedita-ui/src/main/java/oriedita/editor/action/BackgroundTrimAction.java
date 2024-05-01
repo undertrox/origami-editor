@@ -24,6 +24,7 @@ public class BackgroundTrimAction extends AbstractOrieditaAction{
     @Inject
     BackgroundModel backgroundModel;
     @Inject
+    @Named("main_Canvas")
     Canvas canvas;
     @Inject
     CanvasModel canvasModel;

@@ -2,20 +2,9 @@ package oriedita.editor.swing.dialog;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import org.tinylog.Logger;
-import oriedita.editor.CanvasUI;
 import oriedita.editor.FrameProvider;
-import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.ApplicationModel;
-import oriedita.editor.databinding.BackgroundModel;
-import oriedita.editor.databinding.CanvasModel;
-import oriedita.editor.databinding.FoldedFigureModel;
-import oriedita.editor.databinding.FoldedFiguresList;
-import oriedita.editor.drawing.tools.Camera;
-import oriedita.editor.service.AnimationService;
-import oriedita.editor.service.TaskExecutorService;
-import oriedita.editor.swing.component.BulletinBoard;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -52,7 +41,6 @@ public class HelpDialog {
     private JPanel contentPane;
     private JTextPane helpLabel;
     private HelpDialogUI helpDialogUI;
-    private CanvasUI canvasUI;
 
     public void setVisible(boolean helpVisible) {
         assert helpDialogUI != null;
@@ -91,43 +79,14 @@ public class HelpDialog {
     }
 
     @Inject
-    public HelpDialog(FrameProvider frameProvider, ApplicationModel applicationModel,
-                      @Named("creasePatternCamera") Camera creasePatternCamera,
-                      @Named("foldingExecutor") TaskExecutorService foldingExecutor,
-                      BackgroundModel backgroundModel,
-                      CanvasModel canvasModel,
-                      @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
-                      AnimationService animationService,
-                      BulletinBoard bulletinBoard,
-                      FoldedFigureModel foldedFigureModel,
-                      FoldedFiguresList foldedFiguresList) {
+    public HelpDialog(FrameProvider frameProvider, ApplicationModel applicationModel) {
         this.frameProvider = frameProvider;
         this.applicationModel = applicationModel;
-//        this.canvasUI = new CanvasUI(creasePatternCamera, foldingExecutor, backgroundModel, canvasModel,
-//                mainCreasePatternWorker, animationService, applicationModel, bulletinBoard, foldedFigureModel,
-//                foldedFiguresList);
     }
 
     public void start(Point canvasLocation, Dimension canvasSize) {
         $$$setupUI$$$();
 
-        //canvasUI.setLayout(null);
-        //canvasUI.setDim(new Dimension(300, 300));
-        //canvasUI.setMinimumSize(new Dimension(300, 300));
-        //canvasUI.setPreferredSize(new Dimension(300, 300));
-        //canvasUI.setData(applicationModel);
-        JPanel p = new JPanel();
-        p.setMinimumSize(new Dimension(300, 300));
-        p.setPreferredSize(new Dimension(300, 300));
-        //p.add(canvasUI);
-        GridBagConstraints gbc;
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 2.0;
-        gbc.weighty = 2.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        contentPane.add(p, gbc);
         helpDialogUI = new HelpDialogUI(frameProvider.get(), contentPane, applicationModel);
 
         JPopupMenu popup = new JPopupMenu();
@@ -163,7 +122,6 @@ public class HelpDialog {
                 Point p = helpDialogUI.getLocation();
                 helpDialogUI.setLocation(p.x + e.getX() - point.x,
                         p.y + e.getY() - point.y);
-                canvasUI.repaint();
             }
         });
 

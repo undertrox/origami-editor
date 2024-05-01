@@ -34,7 +34,7 @@ public class ResetServiceImpl implements ResetService {
                             FoldedFigureModel foldedFigureModel,
                             GridModel gridModel,
                             AngleSystemModel angleSystemModel,
-                            CameraModel creasePatternCameraModel,
+                            @Named("mainCameraModel") CameraModel creasePatternCameraModel,
                             FoldedFiguresList foldedFiguresList) {
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.creasePatternCamera = creasePatternCamera;

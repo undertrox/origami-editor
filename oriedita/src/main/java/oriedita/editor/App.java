@@ -96,7 +96,7 @@ public class App {
             FileModel fileModel,
             FoldedFiguresList foldedFiguresList,
             @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
-            Canvas canvas,
+            @Named("main_Canvas") Canvas canvas,
             HelpDialog explanation,
             ButtonService buttonService,
             Editor editor,
@@ -104,7 +104,7 @@ public class App {
             GridModel gridModel,
             BackgroundModel backgroundModel,
             AngleSystemModel angleSystemModel,
-            CameraModel cameraModel,
+            @Named("mainCameraModel") CameraModel cameraModel,
             ResetService resetService,
             ActionRegistrationService actionRegistrationService
     ) {

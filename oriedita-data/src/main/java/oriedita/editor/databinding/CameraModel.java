@@ -1,6 +1,5 @@
 package oriedita.editor.databinding;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import origami.crease_pattern.OritaCalc;
@@ -8,7 +7,6 @@ import origami.crease_pattern.OritaCalc;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-@ApplicationScoped
 public class CameraModel {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double rotation;

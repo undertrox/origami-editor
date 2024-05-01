@@ -5,7 +5,7 @@ import oriedita.editor.Colors;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.BaseApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.CreasePatternRenderer;
 import oriedita.editor.drawing.tools.Camera;
@@ -24,11 +24,11 @@ import java.awt.Graphics2D;
 
 public class CreasePatternRendererImpl implements CreasePatternRenderer {
     private final CreasePattern_Worker cpWorker;
-    private final ApplicationModel applicationModel;
+    private final BaseApplicationModel applicationModel;
     private final CanvasModel canvasModel;
     private final Camera cpCamera;
 
-    public CreasePatternRendererImpl(CreasePattern_Worker cpWorker, ApplicationModel applicationModel, CanvasModel canvasModel, Camera cpCamera) {
+    public CreasePatternRendererImpl(CreasePattern_Worker cpWorker, BaseApplicationModel applicationModel, CanvasModel canvasModel, Camera cpCamera) {
         this.cpWorker = cpWorker;
         this.applicationModel = applicationModel;
         this.canvasModel = canvasModel;

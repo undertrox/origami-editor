@@ -1,6 +1,7 @@
 package oriedita.editor.action;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import oriedita.editor.AnimationDurations;
 import oriedita.editor.Animations;
 import oriedita.editor.databinding.ApplicationModel;
@@ -9,6 +10,7 @@ import oriedita.editor.service.AnimationService;
 
 public abstract class AbstractCreasePatternZoomAction extends AbstractOrieditaAction{
     @Inject
+    @Named("mainCameraModel")
     CameraModel creasePatternCameraModel;
 
     @Inject

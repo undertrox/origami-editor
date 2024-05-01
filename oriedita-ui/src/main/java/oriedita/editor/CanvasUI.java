@@ -1,13 +1,12 @@
 package oriedita.editor;
 
-import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
+import oriedita.editor.databinding.BaseApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
@@ -38,7 +37,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-@Dependent // This bean is not proxyable (because JPanel)
+//@Dependent // This bean is not proxyable (because JPanel)
 public class CanvasUI extends JPanel {
     private final Camera creasePatternCamera;
     private final TaskExecutorService foldingExecutor;
@@ -47,7 +46,7 @@ public class CanvasUI extends JPanel {
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final CreasePatternRenderer mainCreasePatternRenderer;
     private final AnimationService animationService;
-    private final ApplicationModel applicationModel;
+    private final BaseApplicationModel applicationModel;
     private final BulletinBoard bulletinBoard;
     private final FoldedFiguresList foldedFiguresList;
     private final FoldedFigureModel foldedFigureModel;
@@ -76,7 +75,7 @@ public class CanvasUI extends JPanel {
             @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
             @Named("mainCreasePattern_Renderer") CreasePatternRenderer mainCreasePatternRenderer,
             AnimationService animationService,
-            ApplicationModel applicationModel,
+            BaseApplicationModel applicationModel,
             BulletinBoard bulletinBoard,
             FoldedFigureModel foldedFigureModel,
             FoldedFiguresList foldedFiguresList

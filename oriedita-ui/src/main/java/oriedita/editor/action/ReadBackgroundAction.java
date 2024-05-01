@@ -2,6 +2,7 @@ package oriedita.editor.action;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import oriedita.editor.Canvas;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.drawing.tools.Background_camera;
@@ -15,6 +16,7 @@ public class ReadBackgroundAction extends AbstractOrieditaAction {
     @Inject
     FileSaveService fileSaveService;
     @Inject
+    @Named("main_Canvas")
     Canvas canvas;
     @Inject
     BackgroundModel backgroundModel;

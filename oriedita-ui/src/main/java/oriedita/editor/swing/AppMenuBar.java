@@ -90,6 +90,7 @@ public class AppMenuBar {
     private JMenuItem saveButton;
     private JMenuItem saveAsButton;
     private JMenuItem exportButton;
+    private JMenuItem exportDialogButton;
     private JMenuItem prefButton;
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
@@ -124,8 +125,8 @@ public class AppMenuBar {
             ResetService resetService,
             FoldedFiguresList foldedFiguresList,
             AnimationService animationService,
-            Camera camera,
-            CameraModel creasePatternCameraModel
+            @Named("creasePatternCamera") Camera camera,
+            @Named("mainCameraModel") CameraModel creasePatternCameraModel
     ) {
         this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
@@ -186,6 +187,7 @@ public class AppMenuBar {
         buttonService.registerButton(saveButton, "saveAction");
         buttonService.registerButton(saveAsButton, "saveAsAction");
         buttonService.registerButton(exportButton, "exportAction");
+        buttonService.registerButton(exportDialogButton, "openExportDialogAction");
         buttonService.registerButton(prefButton, "prefAction");
         buttonService.registerButton(exitButton, "exitAction");
         buttonService.registerButton(showPointRangeCheckBox, "showPointRangeAction");
@@ -428,6 +430,9 @@ public class AppMenuBar {
 
         exportButton = new JMenuItem("Export");
         fileMenu.add(exportButton);
+
+        exportDialogButton = new JMenuItem("Export (Image)");
+        fileMenu.add(exportDialogButton);
 
         JMenuItem importButton = new JMenuItem("Import");
         importButton.setActionCommand("importAction");

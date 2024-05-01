@@ -28,7 +28,7 @@ public class TaskServiceImpl implements TaskService {
     public TaskServiceImpl(
             @Named("foldingExecutor") TaskExecutorService foldingExecutor,
             CanvasModel canvasModel,
-            Canvas canvas,
+            @Named("main_Canvas") Canvas canvas,
             FileSaveService fileSaveService,
             FoldingService foldingService,
             FoldedFiguresList foldedFiguresList,

@@ -86,8 +86,8 @@ public class TopPanel implements PropertyChangeListener {
                     @Any CanvasModel canvasModel,
                     InternalDivisionRatioModel internalDivisionRatioModel,
                     @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
-                    CameraModel creasePatternCameraModel,
-                    Canvas canvas,
+                    @Named("mainCameraModel") CameraModel creasePatternCameraModel,
+                    @Named("main_Canvas") Canvas canvas,
                     ApplicationModel applicationModel,
                     AnimationService animationService) {
         this.measuresModel = measuresModel;

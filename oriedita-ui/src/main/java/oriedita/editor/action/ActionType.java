@@ -193,7 +193,7 @@ public enum ActionType {
     addColorConstraintAction("addColorConstraintAction"),
     axiom5Action("axiom5Action"),
     axiom7Action("axiom7Action"),
-    switchReplaceAction("switchReplaceAction");
+    switchReplaceAction("switchReplaceAction"), openExportDialogAction("openExportDialogAction");
 
 
     static final Map<String, ActionType> actionMap;
