@@ -536,7 +536,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void setData(ApplicationModel applicationModel) {
         canvasUI.setData(applicationModel);
         mouseWheelMovesCreasePattern = applicationModel.getMouseWheelMovesCreasePattern();
-        Logger.debug("repainting");
         canvasUI.repaint();
     }
 
