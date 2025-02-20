@@ -43,6 +43,7 @@ import origami.crease_pattern.worker.foldlineset.Fix1;
 import origami.crease_pattern.worker.foldlineset.Fix2;
 import origami.crease_pattern.worker.foldlineset.InsideToAux;
 import origami.crease_pattern.worker.foldlineset.OrganizeCircles;
+import origami.data.quadTree.PersistentQuadTree;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -569,6 +570,11 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
             }
         }
 
+        if (foldLineSet.getQuadTree() != null) {
+
+            drawQuadTree(foldLineSet.getQuadTree(), g2, camera, p0x_max, p0y_max);
+        }
+
         //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
         if (!hideOperationFrame && canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
             Point p1 = camera.TV2object(operationFrame.getP1());
@@ -611,6 +617,26 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (displayComments) {
             g.drawString(text_cp_setumei, 10, 55);
             textWorker.draw(g2, camera);
+        }
+    }
+
+    private void drawQuadTree(PersistentQuadTree quadTree, Graphics2D g2, Camera camera, int clipx, int clipy) {
+        drawNode(quadTree.getRoot(), g2, camera, clipx, clipy);
+    }
+
+    private void drawNode(PersistentQuadTree.Node node, Graphics2D g, Camera camera, int clipx, int clipy) {
+        if (!node.isLeaf()) {
+            for (PersistentQuadTree.Node child : node.getChildren()) {
+                drawNode(child, g, camera, clipx, clipy);
+            }
+        } else {
+            node.getBounds().forEach(l -> {
+                if (node.getLines().isEmpty()){
+                    DrawingUtil.drawCpLine(g, l.withColor(LineColor.ORANGE_4), camera, LineStyle.COLOR, 2, 0, clipx, clipy, false);
+                }
+                DrawingUtil.drawCpLine(g, l.withColor(LineColor.GREEN_6), camera, LineStyle.COLOR, 1, 0, clipx, clipy, false);
+            });
+
         }
     }
 

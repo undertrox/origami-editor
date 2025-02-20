@@ -69,6 +69,11 @@ public class StraightLine {
         return Math.abs((a * x + b * y + c) / Math.sqrt(a * a + b * b));
     }
 
+    public double side(Point p) {
+        var val = a * p.getX() + b * p.getY() + c;
+        return Math.signum(val);
+    }
+
     public double calculateDistanceSquared(Point p) {//The square of the distance between the straight line and the point p
         double x = p.getX();
         double y = p.getY();

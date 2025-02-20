@@ -1,35 +1,38 @@
 package origami.data.quadTree;
 
-import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.StraightLine;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
 /**
- * QuadTree that is intended to be kept for a long time, with methods to add and remove items
+ * QuadTree containing lines that is intended to be kept for a long time.
+ * Every node keeps references to every line going through the node, as well as every point
+ * contained in the node. The splitting is done based on the number of points
  */
 public class PersistentQuadTree {
+    public static final int CAPACITY = 32;
 
     public static class Node {
-        private double l, r, b, t;
+        private final double l, r, b, t;
         private Node[] children;
-        private ArrayList<LineSegment> lines;
-        private HashSet<Point> points;
-        private Point p1, p2, p3, p4;
+        private final ArrayList<LineSegment> lines;
+        private final HashSet<Point> points;
+        private final Point p1, p2, p3, p4;
+        private final int capacity;
 
-        public Node(double l, double r, double b, double t) {
+        public Node(double l, double r, double b, double t, int capacity) {
             this.l = l;
             this.r = r;
             this.b = b;
             this.t = t;
+            this.capacity = capacity;
             children = null;
             lines = new ArrayList<>();
             points = new HashSet<>();
@@ -52,10 +55,14 @@ public class PersistentQuadTree {
                         points.add(l.getB());
                     }
 
-                if (points.size() > 32) {
+                if (points.size() > capacity) {
                     split();
                 }
             } else {
+                assert lines.isEmpty();
+                assert points.isEmpty();
+                assert children.length == 4;
+
                 for (Node child : children) {
                     child.add(l);
                 }
@@ -69,10 +76,10 @@ public class PersistentQuadTree {
         public void split() {
             children = new Node[4];
             double w = (r - l) / 2, h = (t - b) / 2;
-            children[0] = new Node(l, l + w, b, b + h);
-            children[1] = new Node(l + w, r, b, b + h);
-            children[2] = new Node(l, l + w, b + h, t);
-            children[3] = new Node(l + w, r, b + h, t);
+            children[0] = new Node(l, l + w, b, b + h, capacity);
+            children[1] = new Node(l + w, r, b, b + h, capacity);
+            children[2] = new Node(l, l + w, b + h, t, capacity);
+            children[3] = new Node(l + w, r, b + h, t, capacity);
             for (Node child : children) {
                 for (LineSegment line : lines) {
                     if (child.contains(line)) {
@@ -104,17 +111,13 @@ public class PersistentQuadTree {
             if (straightLine.side(p3) != side) {
                 return true;
             }
-            if (straightLine.side(p4) != side) {
-                return true;
-            }
-            return false;
-            //return bounds.totu_boundary_inside(line);
+            return straightLine.side(p4) != side;
         }
 
         public boolean contains(Point p) {
             var x = p.getX();
             var y = p.getY();
-            return x > l && x < r && y < t && y > b;
+            return x >= l && x <= r && y <= t && y >= b;
         }
 
         public List<LineSegment> getBounds() {
@@ -127,9 +130,15 @@ public class PersistentQuadTree {
     }
 
     private Node root;
+    private final int capacity;
+
+    public PersistentQuadTree(double initialL, double initialR, double initialB, double initialT, int capacity) {
+        root = new Node(initialL, initialR, initialB, initialT, capacity);
+        this.capacity = capacity;
+    }
 
     public PersistentQuadTree(double initialL, double initialR, double initialB, double initialT) {
-        root = new Node(initialL, initialR, initialB, initialT);
+        this(initialL, initialR, initialB, initialT, CAPACITY);
     }
 
     public Node getRoot() {return root;}
@@ -137,7 +146,22 @@ public class PersistentQuadTree {
         root.add(l);
     }
 
+    public List<LineSegment> getAllLines() {
+        var nodes = new ArrayDeque<Node>();
+        var allLines = new HashSet<LineSegment>();
+        nodes.add(root);
+        while (!nodes.isEmpty()) {
+            var node = nodes.poll();
+            if (node.isLeaf()) {
+                allLines.addAll(node.getLines());
+            } else {
+                nodes.addAll(Arrays.asList(node.children));
+            }
+        }
+        return allLines.stream().toList();
+    }
+
     public void clear() {
-        root = new Node(root.l, root.r, root.b, root.t);
+        root = new Node(root.l, root.r, root.b, root.t, capacity);
     }
 }

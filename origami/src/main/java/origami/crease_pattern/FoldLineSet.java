@@ -8,6 +8,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.StraightLine;
+import origami.data.quadTree.PersistentQuadTree;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.DivideAdapter;
 import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
@@ -20,6 +21,7 @@ import java.awt.Color;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +35,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class FoldLineSet {
     int total;               //Total number of line segments actually used
     List<LineSegment> lineSegments = new ArrayList<>(); //折線とする線分のインスタンス化
+
+    public PersistentQuadTree quadTree = new PersistentQuadTree(-200, 200, -200, 200);
 
     private final Queue<LineSegment> Check1LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     private final Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
@@ -250,6 +254,10 @@ public class FoldLineSet {
         return number;
     }
 
+    public PersistentQuadTree getQuadTree() {
+        return quadTree;
+    }
+
     public String setSave(LineSegmentSave save) {
         circles.clear();
         circles.addAll(save.getCircles());
@@ -257,7 +265,32 @@ public class FoldLineSet {
         lineSegments.clear();
         lineSegments.add(new LineSegment());
         lineSegments.addAll(save.getLineSegments());
-
+        quadTree.clear();
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxX = Double.MIN_VALUE;
+        double maxY = Double.MIN_VALUE;
+        long time = Calendar.getInstance().getTimeInMillis();
+        for (LineSegment lineSegment : save.getLineSegments()) {
+            if (lineSegment.determineMinX() < minX) {
+                minX = lineSegment.determineMinX();
+            }
+            if (lineSegment.determineMinY() < minY) {
+                minY = lineSegment.determineMinY();
+            }
+            if (lineSegment.determineMaxX() > maxX) {
+                maxX = lineSegment.determineMaxX();
+            }
+            if (lineSegment.determineMaxY() > maxY) {
+                maxY = lineSegment.determineMaxY();
+            }
+        }
+        quadTree = new PersistentQuadTree(minX, maxX, minY, maxY);
+        for (LineSegment lineSegment : save.getLineSegments()) {
+            quadTree.add(lineSegment);
+        }
+        var newtime = Calendar.getInstance().getTimeInMillis();
+        Logger.info("quadtree rebuild took " + (newtime - time) + " ms");
         total = lineSegments.size() - 1;
 
         return save.getTitle();
