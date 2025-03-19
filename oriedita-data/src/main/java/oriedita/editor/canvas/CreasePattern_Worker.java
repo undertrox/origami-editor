@@ -45,8 +45,6 @@ public interface CreasePattern_Worker {
 
     void branch_trim();
 
-    LineSegmentSet get();
-
     //折畳み推定用にselectされた線分集合の折線数を intとして出力する。//icolが3(cyan＝水色)以上の補助線はカウントしない
     int getFoldLineTotalForSelectFolding();
 

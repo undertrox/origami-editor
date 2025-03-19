@@ -62,7 +62,6 @@ import java.util.List;
 public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     // ------------
     private final int check4ColorTransparencyIncrement = 10;
-    private final LineSegmentSet lineSegmentSet = new LineSegmentSet();    //Instantiation of basic branch structure
     private final Camera creasePatternCamera;
     private final TaskExecutorService camvTaskExecutor;
     private final CanvasModel canvasModel;
@@ -295,14 +294,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public void branch_trim() {
         BranchTrim.apply(foldLineSet);
-    }
-
-    @Override
-    public LineSegmentSet get() {
-        Save save = SaveProvider.createInstance();
-        foldLineSet.getSave(save);
-        lineSegmentSet.setSave(save);
-        return lineSegmentSet;
     }
 
     //折畳み推定用にselectされた線分集合の折線数を intとして出力する。//icolが3(cyan＝水色)以上の補助線はカウントしない
